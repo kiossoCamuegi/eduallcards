@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#430DDB">
+<title>eduall cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--p:#430DDB;--pl:#f1ecfd;--ink:#111;--mut:#6b6880;--line:#e8e4f4;--bg:#fbfaff;--red:#d92d3a;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);color:var(--ink);font:14px/1.5 Montserrat,system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px)}
+.hd{display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:1px solid var(--line);background:#fff;box-shadow:0 4px 18px rgba(67,13,219,.07)}
+.hd img{height:42px;max-width:40vw;object-fit:contain}
+nav{margin-left:auto;display:flex;gap:10px}
+nav button{padding:9px 13px;font-size:18px}nav button.on{background:var(--p);color:#fff;border-color:var(--p)}nav button.on:hover{background:var(--p)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:20px;width:100%;max-width:1600px;margin:0 auto}
+.tab{flex:1;min-height:0}
+#t_edit:not([hidden]){display:grid;grid-template-columns:360px minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:20px}
+#t_tpl:not([hidden]){display:block;overflow:auto}
+aside{overflow:auto;min-height:0;padding-right:16px;border-right:1px solid var(--line)}
+.pv{display:flex;flex-direction:column;min-height:0}
+button,.btn{font:inherit;font-weight:600;border-radius:12px;padding:8px 13px;cursor:pointer;background:#fff;color:var(--p);border:1.5px solid var(--p);display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:background .15s,box-shadow .15s}
+button:hover:not(:disabled),.btn:hover{background:var(--pl);box-shadow:0 2px 10px rgba(67,13,219,.12)}
+button.alt,.btn.alt{border-color:rgba(67,13,219,.3)}
+button.alt:hover:not(:disabled),.btn.alt:hover{border-color:var(--p)}
+button.pri{background:var(--p);color:#fff}button.pri:hover:not(:disabled){background:#3509b3}
+button.danger{background:var(--red);border-color:var(--red);color:#fff}button.danger:hover:not(:disabled){background:#b9212d;box-shadow:0 2px 10px rgba(217,45,58,.3)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.danger.busy{--pg:0%;background:linear-gradient(90deg,#8f1620 var(--pg),var(--red) var(--pg));min-width:215px;transition:none}
+button.danger.busy:disabled{opacity:1;cursor:progress}
+button i,.btn i{font-size:16px;line-height:1}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(67,13,219,.25);outline-offset:2px}
+.btn input{display:none}
+.box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 2px 14px rgba(67,13,219,.05)}
+.box h2{margin:0 0 10px;font-size:15px;font-weight:800;color:var(--p);cursor:pointer;display:flex;justify-content:space-between;user-select:none}
+.box h2::after{content:"−"}.box.closed h2{margin:0}.box.closed h2::after{content:"+"}.box.closed>*:not(h2){display:none}
+label{display:block;font-weight:600;font-size:12px;margin:9px 0 3px;color:var(--mut)}
+input[type=text],input[type=number],select,textarea{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{border-color:var(--p)}
+textarea{height:130px;font-family:ui-monospace,monospace;font-size:12px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.msg{margin-top:6px;font-size:12px;color:var(--mut);min-height:16px}.msg.err{color:#c0392b}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
+.tb{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.tb input[type=text]{flex:1;min-width:170px;width:auto}.tb select{width:auto;max-width:48%}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;overflow:auto;flex:1;min-height:0;align-content:start;padding:2px 8px 12px 2px}
+.cd{position:relative}
+.cd small{display:block;color:var(--mut)}.cn{padding:6px 4px 2px;font-weight:700;font-size:13px}
+.ck{position:absolute;left:14px;top:14px;z-index:2;background:#fff;border-radius:6px;padding:3px 6px;box-shadow:0 1px 5px rgba(0,0,0,.25);margin:0}
+.ck input{width:20px;height:20px;margin:0;accent-color:var(--p)}
+.wrap{width:100%;aspect-ratio:1024/640;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff;position:relative;cursor:pointer}
+.wrap .stage,.tw .stage{transform-origin:0 0}
+.empty{border:2px dashed rgba(67,13,219,.25);border-radius:18px;padding:44px 16px;text-align:center;color:var(--mut);background:#fff}
+.stage{position:relative;width:1024px;height:640px;background:#fff;overflow:hidden;font-family:Montserrat,sans-serif;color:#111}.stage>*{position:absolute;margin:0}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.tt{cursor:pointer;border:2px solid var(--line);border-radius:14px;padding:5px;font-size:12px;font-weight:700;background:#fff}.tt.on{border-color:var(--p);background:var(--pl)}
+.tw{width:100%;aspect-ratio:1024/640;overflow:hidden;margin-bottom:4px;border-radius:4px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:8px;display:none}.bar i{display:block;height:100%;width:0;background:var(--p)}
+#fmt{font-size:11px;overflow:auto;background:#f6f4fc;padding:8px;border-radius:10px;max-height:220px}
+details>summary{color:var(--p)}
+.eb{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.eb button,.eb .btn{padding:7px 10px;font-size:12px}.eb input[type=text],.eb select{width:auto;padding:7px}
+.em{display:grid;grid-template-columns:1fr 330px;gap:12px}
+#ec{overflow:auto;background:#ece8fa;padding:12px;display:flex;justify-content:center;align-items:flex-start;height:70dvh;min-height:260px;border-radius:14px}
+#ewrap{position:relative;background:#fff;box-shadow:0 2px 14px rgba(0,0,0,.25);flex:none}
+#est{transform-origin:0 0;touch-action:none;user-select:none}#est>*{cursor:move}
+#selbox{position:absolute;border:2px solid #2d7ff9;pointer-events:none;display:none}
+#hdl{position:absolute;width:18px;height:18px;background:#2d7ff9;right:-10px;bottom:-10px;pointer-events:auto;cursor:nwse-resize;border-radius:4px}
+#ep{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;overflow:auto;max-height:70dvh}
+#ep h3{margin:14px 0 6px;font-size:14px}
+.pr{display:grid;grid-template-columns:1fr 112px;align-items:center;gap:6px;margin:4px 0;font-size:12px;font-weight:600;color:var(--mut)}
+.pr input,.pr select{padding:5px 6px}.pr input[type=color]{padding:0;height:30px}
+#code{height:200px;font-size:11px}
+.chip{display:inline-block;padding:5px 10px;margin:3px;border:1px solid var(--p);color:var(--p);border-radius:14px;font-size:12px;cursor:grab;background:#fff;user-select:none}
+.oc{position:fixed;top:0;right:0;bottom:0;width:min(96vw,450px);background:#fff;z-index:90;transform:translateX(105%);transition:transform .25s;display:flex;flex-direction:column;box-shadow:-6px 0 24px rgba(0,0,0,.25);padding-top:env(safe-area-inset-top,0px);border-radius:20px 0 0 20px}
+.oc.open{transform:none}
+.oh{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:800}
+.ob{flex:1;overflow:auto;padding:14px 16px}.of{padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
+#bd{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:85}
+#ep .oh{display:none}
+.wrap{box-shadow:0 1px 6px rgba(67,13,219,.12)}
+@media(max-width:900px){
+html,body{height:auto}body{display:block;overflow:auto}
+main{display:block;padding:14px}
+#t_edit:not([hidden]){display:block}aside{overflow:visible;border-right:0;padding-right:0}.grid{max-height:75vh}
+#t_tpl:not([hidden]){overflow:visible}
+.hd{padding:10px 14px}
+.em{display:block}#ec{height:52dvh}
+#ep{position:fixed;top:0;right:0;bottom:0;width:min(94vw,380px);z-index:90;transform:translateX(105%);transition:transform .25s;max-height:none;border-radius:0;padding-top:0}
+#ep.open{transform:none}#ep .oh{display:flex;margin:0 -14px 8px;position:sticky;top:0;background:#fff}
+.tb select{max-width:100%}}
+</style>
+</head>
+<body>
+<header class="hd">
+ <img src="https://ik.imagekit.io/zks5iegia/image-gen__1_-removebg-preview.png?updatedAt=1767179901347" alt="eduall">
+ <nav id="nav"><button data-t="edit" class="on" title="Edição" aria-label="Edição"><i class="bi bi-grid"></i></button><button data-t="tpl" title="Modelos" aria-label="Modelos"><i class="bi bi-palette"></i></button></nav>
+</header>
+<main>
+<section class="tab" id="t_edit">
+<aside>
+  <div class="box"><h2>1. Alunos</h2>
+   <label for="json">Cole aqui a lista de alunos</label>
+   <textarea id="json" placeholder='[{"fullName":"Nome Completo","enrollmentNumber":"2026-0001","class":"10ª A","grade":"10ª Classe","course":"Informática","period":"Manhã","photoUrl":"https://..."}]'></textarea>
+   <div class="row"><button class="pri" id="load">Carregar cartões</button><label class="btn alt" style="margin:0">Importar ficheiro<input type="file" id="file" accept=".json,application/json"></label><button class="alt" id="sample">Usar exemplo</button></div>
+   <div class="msg" id="msg"></div>
+   <details style="margin-top:8px"><summary style="cursor:pointer;font-weight:600">Ligar colunas do ficheiro</summary><div class="msg">Se o seu ficheiro usa outros nomes (ex.: "nome", "turma"), ligue-os aos campos do cartão.</div><div id="mapGrid"></div></details>
+   <label class="btn alt" style="margin-top:8px">Carregar fotos dos alunos<input type="file" id="photos" accept="image/*" multiple></label>
+   <div class="msg">Nomeie cada foto com o nº de matrícula (ex.: 2026-0001.jpg).</div>
+  </div>
+  <div class="box"><h2>2. Escola</h2>
+   <label>Logótipo</label>
+   <div class="row" style="margin:0"><label class="btn alt" style="margin:0">Carregar outro logótipo<input type="file" id="logoFile" accept="image/*"></label><button class="alt" id="logoReset">Repor original</button></div>
+   <div class="row" style="align-items:center"><button class="alt" id="logoCut">Remover cor de fundo</button><span style="font-size:12px;color:var(--mut)">Tolerância</span><input type="number" id="tol" value="40" min="0" max="150" style="width:70px"></div>
+   <div class="msg" id="logoMsg">A cor do canto superior esquerdo é tornada transparente.</div>
+   <label for="sName">Nome da escola</label><input type="text" id="sName" value="Complexo Escolar Privado Monte Sol">
+   <label for="sSub">Subtítulo</label><input type="text" id="sSub" value="Ensino particular">
+   <label for="sAddr">Endereço</label><input type="text" id="sAddr" value="CASSENDA ,RUA 15,EDIF.31/33( PROXIMO DA ADMINISTRAÇAO DA MAINGA)">
+   <label for="sTel">Telefones</label><input type="text" id="sTel" value="935831548 / 900256782">
+   <label for="sRoom">Sala (quando o aluno não tem o campo "room")</label><input type="text" id="sRoom" value="">
+   <label for="sTitle">Título do cartão</label><input type="text" id="sTitle" value="CARTÃO DE ESTUDANTE">
+   <label for="sDir">Legenda da assinatura</label><input type="text" id="sDir" value="DIRETOR(A)">
+   <label class="btn alt" style="margin-top:10px">Carregar assinatura da direcção<input type="file" id="sigFile" accept="image/*"></label>
+   <div class="msg">Use PNG com fundo transparente para um melhor resultado.</div>
+  </div>
+  <div class="box"><h2>3. Resumir nomes</h2>
+   <select id="abm"><option value="fl">Primeiro + último (João Costa)</option><option value="fm">Com iniciais do meio (João M. S. Costa)</option><option value="fi">Só iniciais + último (J. M. S. Costa)</option><option value="full">Repor nome completo</option></select>
+   <div class="row"><button id="abAll">A todos</button><button class="alt" id="abVis">Aos visíveis</button><button class="alt" id="abSel">Aos selecionados</button></div>
+   <div class="msg" id="abmsg">Para um só aluno, clique no cartão.</div>
+  </div>
+  <div class="box"><h2>4. Exportar PDF</h2>
+   <div class="row" style="margin-top:0"><button id="exp" disabled>Visíveis</button><button class="alt" id="expSel" disabled>Selecionados</button></div>
+   <div class="row" style="align-items:center"><select id="gby" style="width:auto"><option value="grade">Classe</option><option value="class">Turma</option><option value="course">Curso</option><option value="period">Período</option></select><button class="alt" id="expGroups" disabled>Um PDF por grupo</button></div>
+   <div class="bar" id="bar"><i></i></div><div class="msg" id="pmsg"></div>
+  </div>
+  <div class="box"><h2>5. Guardar projeto</h2>
+   <div class="msg" style="margin:0 0 8px">Guarda alunos, personalizações, modelos, logótipo, assinatura e fotos num ficheiro.</div>
+   <div class="row" style="margin-top:0"><button id="pExp">Guardar projeto</button><label class="btn alt" style="margin:0">Importar projeto<input type="file" id="pImp" accept=".json,application/json"></label></div>
+   <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">Ver exemplo de ficheiro de alunos</summary><div class="msg">Pode juntar outras colunas e usá-las no cartão. A foto pode ser um link ou uma imagem.</div><pre id="fmt"></pre>
+   <div class="row"><button class="alt" id="fCopy">Copiar exemplo</button><button class="alt" id="fDown">Descarregar exemplo</button></div></details>
+   <div class="msg" id="jmsg"></div>
+  </div>
+</aside>
+<div class="pv">
+ <div class="tb"><input type="text" id="q" placeholder="Pesquisar nome, matrícula, turma…" aria-label="Pesquisar">
+  <select id="by" aria-label="Filtrar por"><option value="">Todos</option><option value="grade">Classe</option><option value="class">Turma</option><option value="course">Curso</option><option value="period">Período</option></select>
+  <select id="val" disabled aria-label="Valor"></select></div>
+ <div class="tb"><button class="alt" id="selVis">Selecionar visíveis</button><button class="alt" id="selNone">Limpar</button><button class="danger" id="expAll" disabled><span id="expAllT">Baixar todos (PDF)</span></button><button class="pri" id="editSel" disabled>Editar selecionados (<span id="selN">0</span>)</button><b id="count" style="margin-left:auto;font-size:12px"></b></div>
+ <div id="grid" class="grid"></div>
+ <div id="empty" class="empty">Cole a lista de alunos ou importe um ficheiro para gerar os cartões.</div>
+</div>
+</section>
+
+<section class="tab" id="t_tpl" hidden>
+ <div class="box"><h2>Modelos de cartão</h2><div class="gal" id="gal"></div>
+  <div class="row"><button class="alt" id="tNew">Novo em branco</button><button class="alt" id="tDup">Duplicar</button><button class="alt" id="tDel">Apagar</button><button class="alt" id="tExp1">Exportar este</button><button class="alt" id="tExp">Exportar todos</button><label class="btn alt" style="margin:0">Importar modelos<input type="file" id="tImp" accept=".json,application/json"></label></div>
+  <div class="msg">O modelo selecionado é o padrão. Pode aplicá-lo a cartões específicos:</div>
+  <div class="row" style="margin-top:0"><button class="pri" id="tAll">Aplicar a todos</button><button class="alt" id="tSel">Aos selecionados</button><button class="alt" id="tClr">Todos usam o padrão</button></div>
+  <div class="msg" id="tmsg"></div></div>
+ <div class="box"><h2>Editor do design</h2>
+  <div class="eb">
+   <input type="text" id="eName" aria-label="Nome do modelo" placeholder="Nome do modelo" style="width:150px">
+   <button class="alt" data-add="text">+ Texto</button><button class="alt" data-add="rect">+ Retângulo</button><button class="alt" data-add="circle">+ Círculo</button><button class="alt" data-add="line">+ Linha</button>
+   <label class="btn alt" style="margin:0">+ Imagem<input type="file" id="eImg" accept="image/*"></label>
+   <select id="eField" aria-label="Inserir campo"></select>
+   <button class="alt" id="eMirAll">Espelhar tudo</button><button class="alt" id="eUndo">Desfazer</button><button class="alt" id="eReset">Repor original</button><button id="eProps">Propriedades</button>
+  </div>
+  <div class="em">
+   <div id="ec"><div id="ewrap"><div id="est" class="stage"></div><div id="selbox"><i id="hdl"></i></div></div></div>
+   <div id="ep">
+    <div class="oh"><span>Propriedades</span><button class="alt" id="epX">Fechar</button></div>
+    <h3 style="margin-top:0">Elemento selecionado</h3><div id="props"></div>
+    <div class="row"><button class="alt" id="eMir">Espelhar</button><button class="alt" id="eDup">Duplicar</button><button class="alt" id="eDel">Apagar</button><button class="alt" id="eFront">À frente</button><button class="alt" id="eBack">Atrás</button></div>
+    <div class="msg" id="eMsg"></div>
+    <h3>Dados do aluno</h3>
+    <label style="display:flex;gap:6px;align-items:center;margin:0 0 6px"><input type="checkbox" id="eLbl" checked style="width:auto"> Criar também o rótulo</label>
+    <div id="chips"></div>
+    <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">Opções avançadas</summary><textarea id="code" spellcheck="false"></textarea>
+    <div class="msg">Use {{campo}} para dados do aluno. Setas movem o elemento (Shift = 10px).</div></details>
+   </div>
+  </div>
+ </div>
+</section>
+</main>
+<div class="oc" id="md" role="dialog" aria-label="Editar cartão">
+ <div class="oh"><span id="mdT"></span><button class="alt" id="mdX">Fechar</button></div>
+ <div class="ob" id="mdB"></div>
+ <div class="of"><button class="pri" id="mdSave">Guardar</button><button class="alt" id="mdClr">Limpar personalizações</button></div>
+</div>
+<div id="bd" hidden></div>
+<div id="off" style="position:fixed;left:-99999px;top:0"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const DEFAULT_LOGO="https://ik.imagekit.io/zks5iegia/WhatsApp%20Image%202026-08-05%20at%2011.26.39(1)%20(1).jpg",KEY="eduall-cards-v2";
+let students=[],rawStudents=[],logo=DEFAULT_LOGO,photos={},failed=0,sig=null,mapping={},templates,activeId,tpl,tab="edit";
+const picked=new Set(),imgCache={};
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fold=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const slug=s=>fold(s).replace(/[^\w]+/g,"-");
+
+/* ===== imagens: copia segura para o PDF (corrigido) ===== */
+const b2d=b=>new Promise((ok,no)=>{const f=new FileReader();f.onload=()=>ok(f.result);f.onerror=no;f.readAsDataURL(b)});
+const viaFetch=async s=>{const r=await fetch(s,{mode:"cors",cache:"no-store"});if(!r.ok)throw 0;return b2d(await r.blob())};
+const viaImg=s=>new Promise((ok,no)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>{try{const c=document.createElement("canvas");c.width=i.naturalWidth;c.height=i.naturalHeight;c.getContext("2d").drawImage(i,0,0);ok(c.toDataURL("image/png"))}catch(e){no(e)}};i.onerror=no;i.src=s});
+const PROX=[u=>"https://images.weserv.nl/?url="+encodeURIComponent(u),u=>"https://wsrv.nl/?url="+encodeURIComponent(u),u=>"https://corsproxy.io/?"+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function pool(a,n,f){let i=0;await Promise.all(Array.from({length:Math.min(n,a.length)},async()=>{while(i<a.length)await f(a[i++])}))}
+function shrink(d,max=900){return new Promise(ok=>{if(/^data:image\/svg/.test(d))return ok(d);const i=new Image();i.onload=()=>{try{
+  const k=Math.min(1,max/Math.max(i.naturalWidth,i.naturalHeight)),jpg=/^data:image\/jpeg/.test(d);if(k===1&&jpg)return ok(d);
+  const c=document.createElement("canvas");c.width=Math.round(i.naturalWidth*k);c.height=Math.round(i.naturalHeight*k);const x=c.getContext("2d");
+  if(jpg){x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height)}x.drawImage(i,0,0,c.width,c.height);ok(jpg?c.toDataURL("image/jpeg",.9):c.toDataURL("image/png"))}catch(e){ok(d)}};i.onerror=()=>ok(d);i.src=d})}
+async function toData(u){
+  if(!u||u.startsWith("data:")||imgCache[u])return true;
+  const bust=u+(u.includes("?")?"&":"?")+"_cb="+Date.now(),pause=()=>sleep(700).then(()=>{throw 0});
+  const tries=[()=>viaFetch(u),()=>viaImg(u),()=>viaImg(bust),...PROX.map(p=>()=>viaFetch(p(u))),...PROX.slice(0,2).map(p=>()=>viaImg(p(u))),pause,...PROX.map(p=>()=>viaFetch(p(u)))];
+  for(const t of tries){try{const d=await t();if(d&&/^data:image\//.test(d)){imgCache[u]=await shrink(d);return true}}catch(e){}}
+  return false;
+}
+async function rast(img){const s=img.getAttribute("src")||"";if(!/^data:image\/svg/.test(s))return;
+  try{const i=new Image();await new Promise((ok,no)=>{i.onload=ok;i.onerror=no;i.src=s});const w=(i.naturalWidth||300)*3,h=(i.naturalHeight||100)*3,c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(i,0,0,w,h);img.src=c.toDataURL("image/png")}catch(e){}}
+const ready=img=>img.complete&&img.naturalWidth?Promise.resolve():new Promise(r=>{img.onload=img.onerror=r;setTimeout(r,8000)});
+function cut(src,tol){return new Promise((ok,no)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>{try{
+  const c=document.createElement("canvas");c.width=i.naturalWidth;c.height=i.naturalHeight;const x=c.getContext("2d");x.drawImage(i,0,0);
+  const d=x.getImageData(0,0,c.width,c.height),p=d.data;if(p[3]===0)return no(new Error("transp"));
+  const r=p[0],g=p[1],b=p[2];for(let k=0;k<p.length;k+=4)if(Math.abs(p[k]-r)+Math.abs(p[k+1]-g)+Math.abs(p[k+2]-b)<=tol*3)p[k+3]=0;
+  x.putImageData(d,0,0);ok(c.toDataURL("image/png"))}catch(e){no(e)}};i.onerror=no;i.src=src})}
+const readFile=f=>new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result);r.readAsDataURL(f)});
+async function cutLogo(el){try{await toData(logo);logo=await cut(imgCache[logo]||logo,+$("tol").value||40);persist();render();if(tab==="tpl")draw();el.className="msg";el.textContent="Fundo removido."}
+  catch(e){el.className="msg err";el.textContent=e&&e.message==="transp"?"O logótipo já é transparente.":"Não foi possível (o servidor bloqueia a imagem). Carregue o ficheiro manualmente."}}
+
+/* ===== modelos ===== */
+const BLANK="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+const SIG0="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="116" height="40" viewBox="0 0 116 40"><path d="M6 30c10-4 18-24 24-26 4 0-6 26-2 30 5 4 14-20 22-18s-6 18 0 18 14-12 26-12 12 6 30 4" fill="none" stroke="#222" stroke-width="1.6" stroke-linecap="round"/></svg>');
+const SAMPLE=[{fullName:"Nzinga Maria Kiala",enrollmentNumber:"2026-0001",class:"10ª A",grade:"10ª Classe",course:"Informática",period:"Manhã"},{fullName:"Nkosi Daniel Mulenga",enrollmentNumber:"2026-0011",class:"10ª B",grade:"10ª Classe",course:"Contabilidade e Gestão",period:"Tarde"},{fullName:"Chissola Teodoro Manuel da Silva Capenda",enrollmentNumber:"2026-0041",class:"12ª A",grade:"12ª Classe",course:"Electrotecnia",period:"Noite"}];
+const bx=(x,y,w,h,s="")=>`<div style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;${s}"></div>`;
+const tx=(x,y,t,fs,fw,c,s="")=>`<div style="left:${x}px;top:${y}px;font-size:${fs}px;font-weight:${fw};color:${c};white-space:nowrap;${s}">${t}</div>`;
+const nm=(x,y,w,fs,c)=>`<div data-fit="1" style="left:${x}px;top:${y}px;width:${w}px;font-size:${fs}px;font-weight:800;color:${c};text-transform:uppercase;white-space:nowrap">{{fullName}}</div>`;
+const pic=(x,y,w,h,s="")=>`<div style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;background-color:#e9e4dc;display:flex;align-items:center;justify-content:center;font-size:${Math.round(w/3.2)}px;font-weight:700;color:#a99b87;${s}">{{initials}}</div>\n<img src="{{photo}}" onerror="this.style.visibility='hidden'" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;object-fit:cover;${s}">`;
+const lg=(x,y,w,h,s="")=>`<img src="{{logo}}" onerror="this.style.visibility='hidden'" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;object-fit:contain;${s}">`;
+const sg=(x,y,w,c)=>`<img src="{{signature}}" style="left:${x}px;top:${y}px;width:${w}px;height:56px;object-fit:contain">\n`+bx(x,y+58,w,2,`background-color:${c}`)+"\n"+tx(x,y+64,"{{dirLabel}}",11,700,c,`width:${w}px;text-align:center`);
+const lv=(x,y,l,v,lc,vc)=>tx(x,y,l,15,600,lc,"text-transform:uppercase")+"\n"+tx(x,y+22,v,24,800,vc);
+const foot=(x,y,c)=>tx(x,y,"{{address}}  ·  {{phones}}",11,500,c);
+const MAT='Nº de matrícula: <b>{{enrollmentNumber}}</b>';
+const four=(x1,x2,y1,y2,lc,vc)=>[lv(x1,y1,"Turma","{{class}}",lc,vc),lv(x2,y1,"Sala","{{room}}",lc,vc),lv(x1,y2,"Período","{{period}}",lc,vc),lv(x2,y2,"Curso","{{course}}",lc,vc)];
+const LV=(x,y,l,v)=>`<div style="left:${x}px;top:${y}px;font-size:24px;font-weight:300;text-transform:uppercase;white-space:nowrap">${l}</div>\n<div style="left:${x}px;top:${y+29}px;font-size:21px;font-weight:800;text-transform:uppercase;white-space:nowrap">${v}</div>`;
+const DEFAULT_TPL=[
+`<div style="left:0px;top:0px;width:159px;height:640px;background-color:#6b4a24"></div>`,
+`<div style="left:65px;top:117px;width:60px;height:405px;background-color:#eea324;border-radius:16px"></div>`,
+`<div style="left:85px;top:117px;width:294px;height:405px;background-color:#e9e4dc;display:flex;align-items:center;justify-content:center;font-size:90px;font-weight:700;color:#a99b87">{{initials}}</div>`,
+`<img src="{{photo}}" onerror="this.style.visibility='hidden'" style="left:85px;top:117px;width:294px;height:405px;object-fit:cover">`,
+`<img src="{{logo}}" onerror="this.style.visibility='hidden'" style="left:170px;top:8px;width:320px;height:98px;object-fit:contain;object-position:left center">`,
+`<div style="left:432px;top:112px;font-size:17px;font-weight:500;color:#6b4a24;text-transform:uppercase;white-space:nowrap">{{schoolName}}</div>`,
+`<div style="left:432px;top:143px;font-size:13px;font-weight:700;color:#6b4a24">{{subtitle}}</div>`,
+`<div style="left:432px;top:196px;font-size:39px;font-weight:800;color:#6b4a24;white-space:nowrap">{{title}}</div>`,
+`<div data-fit="1" style="left:432px;top:264px;width:520px;font-size:32px;font-weight:800;text-transform:uppercase;white-space:nowrap">{{fullName}}</div>`,
+`<div style="left:432px;top:314px;font-size:14px;color:#6b4a24;white-space:nowrap">Nº DE MATRÍCULA : <b style="font-weight:800">{{enrollmentNumber}}</b></div>`,
+`<div style="left:432px;top:351px;width:513px;height:3px;background-color:#eea324"></div>`,
+LV(432,389,"Turma","{{class}}"),LV(666,389,"Sala","{{room}}"),LV(432,465,"Período","{{period}}"),LV(666,465,"Curso","{{course}}"),
+`<svg style="left:903px;top:94px;width:44px;height:100px" viewBox="0 0 44 100"><path d="M0 0h44v16a22 22 0 0 1-44 0z" fill="#eea324"/><path d="M0 66a22 22 0 0 1 44 0z" fill="#6b4a24"/><g stroke="#eea324" stroke-width="2" stroke-linecap="round"><path d="M22 74v3M22 95v3M8 86h3M33 86h3M12 76l2 2M30 94l2 2M32 76l-2 2M14 94l-2 2"/></g><circle cx="22" cy="86" r="7" fill="#eea324"/></svg>`,
+`<div style="left:172px;top:596px;font-size:10px;line-height:1.5;width:560px"><b>Endereço:</b>&nbsp; {{address}}<br><b>Tel:</b> {{phones}}</div>`,
+`<div style="left:850px;top:566px;width:112px;text-align:center;font-size:9px;font-weight:800">{{dirLabel}}</div>`,
+`<img src="{{signature}}" style="left:840px;top:574px;width:132px;height:44px;object-fit:contain">`,
+`<div style="left:848px;top:610px;width:116px;height:3px;background-color:#111111"></div>`
+].join("\n");
+const L_TOP=(p,a)=>[bx(0,0,1024,150,`background-color:${p}`),bx(0,150,1024,8,`background-color:${a}`),lg(40,22,106,106,"background-color:#fff;border-radius:12px;padding:6px;box-sizing:border-box"),
+  tx(175,38,"{{schoolName}}",28,800,"#ffffff"),tx(175,80,"{{subtitle}}",15,600,a),tx(175,108,"{{title}}",15,600,"#ffffff","letter-spacing:3px"),
+  pic(50,190,260,330,"border-radius:14px"),nm(350,195,640,36,p),tx(350,250,MAT,16,500,"#555555"),bx(350,288,80,5,`background-color:${a}`),
+  ...four(350,650,315,405,"#777777","#111111"),sg(790,478,170,"#111111"),bx(0,590,1024,50,`background-color:${p}`),foot(40,606,"#ffffff")].join("\n");
+const L_SIDE=(p,a)=>[bx(724,0,300,640,`background-color:${p}`),bx(752,68,244,244,`background-color:${a};border-radius:50%`),pic(762,78,224,224,"border-radius:50%"),
+  lg(774,340,200,100,"background-color:#fff;border-radius:12px;padding:8px;box-sizing:border-box"),tx(50,48,"{{schoolName}}",22,800,p),tx(50,80,"{{subtitle}}",13,600,"#777777"),tx(50,150,"{{title}}",14,700,a,"letter-spacing:4px"),
+  nm(50,182,640,46,"#111111"),tx(50,248,MAT,16,500,"#555555"),bx(50,288,120,5,`background-color:${a}`),
+  ...four(50,380,320,415,"#777777","#111111"),sg(480,500,190,"#111111"),foot(50,604,"#666666")].join("\n");
+const L_DARK=(p,a)=>[bx(0,0,1024,640,`background-color:${p}`),bx(20,20,984,600,`border:2px solid ${a};box-sizing:border-box`),
+  pic(60,70,250,320,`border-radius:8px;border:3px solid ${a};box-sizing:border-box`),lg(60,420,250,130,"background-color:#fff;border-radius:10px;padding:10px;box-sizing:border-box"),
+  tx(350,62,"{{schoolName}}",24,700,a),tx(350,98,"{{subtitle}}",14,500,"#bbbbbb"),tx(350,150,"{{title}}",34,300,"#ffffff","letter-spacing:5px"),
+  nm(350,205,640,40,"#ffffff"),tx(350,262,MAT,16,500,"#cccccc"),bx(350,300,513,2,`background-color:${a}`),
+  ...four(350,650,330,420,a,"#ffffff"),bx(780,486,190,84,"background-color:#fff;border-radius:8px"),sg(790,490,170,"#111111"),foot(50,590,"#999999")].join("\n");
+const sv=(x,y,w,h,d,f,s="")=>`<svg style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;${s}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="${d}" fill="${f}"/></svg>`;
+const bc=(x,y,w,h,c="#111111")=>`<img src="{{barcode}}" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;object-fit:fill">\n`+tx(x,y+h+2,"{{enrollmentNumber}}",13,600,c,`width:${w}px;text-align:center;letter-spacing:2px`);
+const rw=(x,y,l,v,lc,vc,lw,fs,w)=>tx(x,y,l,fs,600,lc,"text-transform:uppercase")+"\n"+tx(x+lw,y,":",fs,600,lc)+"\n"+`<div data-fit="1" style="left:${x+lw+24}px;top:${y}px;width:${w}px;font-size:${fs}px;font-weight:800;color:${vc};text-transform:uppercase;white-space:nowrap">${v}</div>`;
+const ROWS=(x,y,st,lc,vc,lw,fs,w,ln)=>[["Nome","{{fullName}}"],["Matrícula","{{enrollmentNumber}}"],["Classe","{{grade}}"],["Turma","{{class}}"],["Curso","{{course}}"],["Período","{{period}}"]].map(([l,v],i)=>rw(x,y+i*st,l,v,lc,vc,lw,fs,w)+(ln?"\n"+bx(x,y+i*st+st-8,w+lw+24,1,`background-color:${ln}`):"")).join("\n");
+const WL="background-color:#fff;border-radius:12px;padding:6px;box-sizing:border-box";
+const T_BF=(n=>{const y="#f2b01e";return[
+ bx(0,0,1024,165,`background-color:${n}`),sv(690,0,334,110,"M45 0H334V110H0Z",y),tx(690,34,"{{title}}",32,800,n,"width:334px;text-align:center"),
+ lg(28,20,115,115,WL),tx(165,30,"{{schoolName}}",34,800,"#ffffff","text-transform:uppercase;width:510px;overflow:hidden"),tx(165,84,"{{subtitle}}",20,500,"#ffffff"),bx(165,122,480,3,`background-color:${y}`),
+ sv(330,158,300,22,"M0 0H300Q220 22 100 10Q40 6 0 0Z",y),
+ pic(50,195,255,320,`border-radius:14px;border:4px solid ${n};box-sizing:border-box`),ROWS(345,200,52,n,"#111111",170,22,330,"#cccccc"),
+ bc(50,525,240,40,n),sg(420,505,200,n),bx(740,520,230,64,`background-color:${n};border-radius:14px`),tx(740,536,"{{period}}",26,800,"#ffffff","width:230px;text-align:center"),
+ bx(0,598,1024,42,`background-color:${n}`),sv(270,590,484,50,"M30 0H454L484 50H0Z",y),tx(270,606,"{{address}}",11,700,n,"width:484px;text-align:center;overflow:hidden")].join("\n")})("#17285c");
+const T_GK=((b,o)=>[
+ sv(640,0,384,70,"M0 0H384V70Q250 60 180 30T0 0Z",b),lg(36,26,110,110),
+ tx(165,34,"{{schoolName}}",38,800,b,"text-transform:uppercase;width:600px;overflow:hidden"),tx(165,88,"{{subtitle}}",20,600,"#444444"),
+ bx(165,128,300,44,`background-color:${o};border-radius:4px`),tx(165,136,"{{title}}",24,700,"#ffffff","width:300px;text-align:center"),
+ pic(40,200,230,290,`border-radius:12px;border:4px solid ${b};box-sizing:border-box`),ROWS(305,205,48,"#444444","#111111",170,21,400,"#dddddd"),
+ bc(40,510,230,38),sg(780,485,190,"#111111"),
+ sv(0,560,1024,40,"M0 30Q250 0 520 30T1024 10V16Q760 40 520 36T0 36Z",o),sv(0,572,1024,68,"M0 30Q250 0 520 30T1024 10V68H0Z",b),foot(40,606,"#ffffff")].join("\n"))("#1f3f9a","#f08a1c");
+const T_AMG=((r,g)=>[
+ bx(0,596,1024,44,`background-color:${g}`),sv(0,0,420,640,"M380 0H410L290 640H260Z",g),sv(0,0,380,640,"M0 0H380L260 640H0Z",r),
+ bx(55,120,230,230,"background-color:#fff;border-radius:50%"),pic(65,130,210,210,"border-radius:50%"),lg(85,385,160,120,WL),
+ tx(430,40,"{{schoolName}}",32,800,r,"text-transform:uppercase;width:560px;overflow:hidden"),tx(430,86,"{{subtitle}}",18,600,"#555555"),tx(430,130,"{{title}}",20,800,g,"letter-spacing:5px"),
+ ROWS(430,185,52,"#555555","#111111",170,22,330,"#e5e5e5"),bc(430,510,240,40),sg(790,490,180,"#111111"),foot(300,607,"#ffffff")].join("\n"))("#d32f2f","#0b7a3b");
+const T_ARY=((r,d)=>[
+ sv(0,0,1024,200,"M0 0H1024V120Q512 200 0 120Z",r),tx(0,34,"{{schoolName}}",40,800,"#ffffff","width:1024px;text-align:center;text-transform:uppercase"),tx(0,92,"{{subtitle}}",20,600,"#ffffff","width:1024px;text-align:center"),
+ pic(60,160,250,320,"border-radius:16px;border:6px solid #fff;box-shadow:0 2px 12px rgba(0,0,0,.3);box-sizing:border-box"),
+ tx(350,205,"{{title}}",20,800,r,"letter-spacing:5px"),ROWS(350,245,50,"#555555","#111111",170,22,260,"#e5e5e5"),lg(830,200,150,110),
+ sg(810,385,170,"#111111"),bc(60,505,250,36),sv(0,570,1024,70,"M0 70V35Q260 0 520 28T1024 10V70Z",d),foot(60,610,"#ffffff")].join("\n"))("#d3202f","#8f111c");
+const T_NF=((t,g,m,k)=>[
+ lg(28,20,170,130,"object-position:left center"),tx(225,26,"{{schoolName}}",36,800,k,"text-transform:uppercase;width:770px;overflow:hidden"),tx(225,80,"{{subtitle}}",20,500,m),
+ bx(300,165,724,26,`background-color:${g}`),sv(0,165,330,52,"M0 0H330L290 52H0Z",t),tx(24,174,"Nº {{enrollmentNumber}}",22,700,"#ffffff"),
+ tx(360,215,"{{title}}",36,800,k,"width:430px;text-align:center"),bc(800,205,190,50),
+ pic(50,235,200,255,`border-radius:10px;border:3px solid ${g};box-sizing:border-box`),ROWS(290,250,52,t,m,185,26,420),sg(50,495,200,k),
+ bx(0,592,1024,48,`background-color:${m}`),bx(40,588,300,52,"background-color:#fff"),tx(56,596,"Linha de apoio",13,500,"#333333"),tx(56,612,"{{phones}}",20,700,t,"width:270px;overflow:hidden")].join("\n"))("#0b7b80","#e8b05a","#7a0030","#0d2a3b");
+const T_NV=((t,g,m,k)=>[
+ bx(296,0,728,40,`background-color:${g}`),sv(0,0,330,70,"M0 0H330L290 70H0Z",t),lg(780,52,200,110),
+ tx(60,110,"Endereço da escola",32,800,k),tx(60,158,"{{address}}",22,600,t,"white-space:normal;width:520px;line-height:1.4"),bx(60,250,380,4,`background-color:${g}`),
+ tx(60,280,"Contactos",32,800,k),tx(60,328,"{{phones}}",24,600,t),tx(60,390,"Aluno",32,800,k),
+ tx(60,438,"{{fullName}}",22,600,t,"white-space:normal;width:520px"),tx(60,480,"Nº {{enrollmentNumber}} · {{class}}",22,600,t),
+ bx(610,110,4,400,`background-color:${g}`),tx(650,190,"Nota",32,800,k),
+ tx(650,240,"1. Este cartão deve ser usado de forma visível durante as aulas.<br>2. Em caso de perda, contacte a secretaria.<br>3. A 2ª via é emitida mediante pagamento.",19,600,t,"white-space:normal;width:340px;line-height:1.5"),
+ bx(0,592,1024,48,`background-color:${m}`),bx(40,588,300,52,"background-color:#fff"),tx(56,596,"Linha de apoio",13,500,"#333333"),tx(56,612,"{{phones}}",20,700,t,"width:270px;overflow:hidden")].join("\n"))("#0b7b80","#e8b05a","#7a0030","#0d2a3b");
+const C39=Object.fromEntries("0:nnnwwnwnn 1:wnnwnnnnw 2:nnwwnnnnw 3:wnwwnnnnn 4:nnnwwnnnw 5:wnnwwnnnn 6:nnwwwnnnn 7:nnnwnnwnw 8:wnnwnnwnn 9:nnwwnnwnn A:wnnnnwnnw B:nnwnnwnnw C:wnwnnwnnn D:nnnnwwnnw E:wnnnwwnnn F:nnwnwwnnn G:nnnnnwwnw H:wnnnnwwnn I:nnwnnwwnn J:nnnnwwwnn K:wnnnnnnww L:nnwnnnnww M:wnwnnnnwn N:nnnnwnnww O:wnnnwnnwn P:nnwnwnnwn Q:nnnnnnwww R:wnnnnnwwn S:nnwnnnwwn T:nnnnwnwwn U:wwnnnnnnw V:nwwnnnnnw W:wwwnnnnnn X:nwnnwnnnw Y:wwnnwnnnn Z:nwwnwnnnn -:nwnnnnwnw .:wwnnnnwnn *:nwnnwnwnn".split(" ").map(e=>[e[0],e.slice(2)]));
+function code39(t){let x=0,r="";for(const ch of "*"+String(t||"0").toUpperCase().replace(/[^0-9A-Z.\-]/g,"-")+"*"){const p=C39[ch];for(let i=0;i<9;i++){const w=p[i]==="w"?3:1;if(i%2===0)r+=`<rect x="${x}" y="0" width="${w}" height="40" fill="#000"/>`;x+=w}x+=1}
+  return "data:image/svg+xml,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${x}" height="40" viewBox="0 0 ${x} 40" preserveAspectRatio="none">${r}</svg>`)}
+const BLANK_TPL=[tx(60,60,"{{schoolName}}",26,800,"#111111"),pic(60,150,240,300,"border-radius:10px"),nm(340,170,640,40,"#111111"),tx(340,230,MAT,16,500,"#555555")].join("\n");
+const FACTORY=[{id:"t0",name:"Monte Sol (original)",html:DEFAULT_TPL},
+  {id:"t1",name:"Azul Oceano",html:L_TOP("#0b4f9c","#f2b705")},{id:"t2",name:"Verde Escola",html:L_TOP("#176b45","#f4c430")},
+  {id:"t3",name:"Roxo Moderno",html:L_SIDE("#5b2a86","#ff7a59")},{id:"t4",name:"Bordô Clássico",html:L_SIDE("#7a1f2b","#d9a441")},{id:"t5",name:"Noite Dourada",html:L_DARK("#14161c","#e0b252")},
+  {id:"t6",name:"Bright Future (marinho e amarelo)",html:T_BF},{id:"t7",name:"Gurukul (azul e laranja)",html:T_GK},{id:"t8",name:"AMG (vermelho e verde)",html:T_AMG},
+  {id:"t9",name:"Aryan (vermelho)",html:T_ARY},{id:"t10",name:"NCVT frente (verde-azulado)",html:T_NF},{id:"t11",name:"NCVT verso (morada e notas)",html:T_NV}];
+const SCH=[["sName","name"],["sSub","subtitle"],["sAddr","address"],["sTel","phones"],["sRoom","room"],["sTitle","title"],["sDir","dirLabel"]];
+const schoolData=()=>Object.fromEntries(SCH.map(([id,k])=>[k,$(id).value]));
+const applySchool=sc=>SCH.forEach(([id,k])=>{if(sc&&sc[k]!==undefined)$(id).value=sc[k]});
+const cur=()=>templates.find(t=>t.id===activeId);
+function persist(){cur().html=tpl;try{localStorage.setItem(KEY,JSON.stringify({templates,activeId,mapping,logo,sig,school:schoolData(),students:rawStudents,seen:FACTORY.map(f=>f.id)}))}catch(e){}}
+let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
+templates=(saved&&Array.isArray(saved.templates)&&saved.templates.length?saved.templates:FACTORY).map(t=>({...t}));
+activeId=saved&&templates.some(t=>t.id===saved.activeId)?saved.activeId:templates[0].id;tpl=cur().html;
+if(saved){mapping=saved.mapping||{};if(saved.logo)logo=saved.logo;if(saved.sig)sig=saved.sig;applySchool(saved.school)}
+const seen=(saved&&saved.seen)||["t0","t1","t2","t3","t4","t5"];
+FACTORY.forEach(f=>{if(!seen.includes(f.id)&&!templates.some(t=>t.id===f.id))templates.push({...f})});
+const tplFor=s=>(templates.find(t=>t.id===s.__tpl)||cur()).html;
+
+/* ===== preencher cartão ===== */
+function fill(t,s){
+  const o=s.__o||{},photo=photos[s.enrollmentNumber]||s.__photo||s.photoUrl||"",lgo=o.logo||logo,fn=s.__dn||s.fullName||"SEM NOME";
+  const m={fullName:fn,class:s.class||"—",period:s.period||"—",course:s.course||"NÃO ATRIBUIDO",room:o.room||s.room||s.sala||$("sRoom").value||"—",
+    initials:fn.trim().split(/\s+/).map(w=>w[0]).slice(0,2).join(""),schoolName:o.schoolName||$("sName").value,subtitle:o.subtitle||$("sSub").value,
+    address:o.address||$("sAddr").value,phones:o.phones||$("sTel").value,title:o.title||$("sTitle").value,dirLabel:o.dirLabel||$("sDir").value};
+  return t.replace(/\{\{(\w+)\}\}/g,(a,k)=>k==="photo"?esc(imgCache[photo]||photo||BLANK):k==="logo"?esc(imgCache[lgo]||lgo||BLANK):k==="barcode"?esc(code39(s.enrollmentNumber)):k==="signature"?esc(o.signature||sig||SIG0):esc(m[k]??s[k]??""));
+}
+const stageHTML=s=>`<div class="stage">${fill(tplFor(s),s)}</div>`;
+function fitNames(root){root.querySelectorAll("[data-fit]").forEach(el=>{let fs=parseFloat(el.style.fontSize)||32;while(el.scrollWidth>el.clientWidth+1&&fs>12){fs--;el.style.fontSize=fs+"px"}})}
+function rescale(root){root.querySelectorAll("[data-sc]").forEach(w=>{const st=w.firstElementChild;if(st)st.style.transform=`scale(${w.clientWidth/1024})`})}
+
+/* ===== nomes ===== */
+const PART=new Set(["de","da","do","das","dos","e","di","del"]);
+function abbr(n,mode){
+  const p=String(n||"").trim().split(/\s+/);if(mode==="full")return"";if(p.length<3)return n||"";
+  const f=p[0],l=p[p.length-1],mid=p.slice(1,-1).filter(w=>!PART.has(w.toLowerCase())).map(w=>w[0].toUpperCase()+".");
+  return mode==="fl"?f+" "+l:mode==="fm"?[f,...mid,l].join(" "):[f[0].toUpperCase()+".",...mid,l].join(" ");
+}
+function setS(i,k,v){students[i][k]=v;const rk=k.startsWith("__")?k:(mapping[k]||k);rawStudents[i][rk]=v}
+function applyAbbr(idx,mode,box){idx.forEach(i=>setS(i,"__dn",abbr(students[i].fullName,mode)));persist();render();$("abmsg").textContent=`Aplicado a ${idx.length} cartões.`}
+
+/* ===== lista de cartões ===== */
+function vis(){const by=$("by").value,v=$("val").value,q=fold($("q").value);
+  return students.map((s,i)=>i).filter(i=>{const s=students[i];if(by&&v&&String(s[by]??"")!==v)return false;return!q||fold([s.fullName,s.__dn,s.enrollmentNumber,s.class,s.course,s.grade,s.period].join(" ")).includes(q)})}
+function render(){
+  const L=vis();
+  $("empty").style.display=students.length?"none":"block";
+  $("count").textContent=students.length?`${L.length} de ${students.length}`:"";
+  $("selN").textContent=picked.size;$("editSel").disabled=!picked.size;
+  $("exp").disabled=!L.length;$("expSel").disabled=!picked.size;$("expAll").disabled=!students.length;$("expGroups").disabled=!students.length;
+  if(tab==="edit"){
+    $("grid").innerHTML=L.map(i=>{const s=students[i];return `<div class="cd"><label class="ck"><input type="checkbox" data-ck="${i}" ${picked.has(i)?"checked":""} aria-label="Selecionar"></label><div class="wrap" data-sc data-open="${i}">${stageHTML(s)}</div><div class="cn">${esc(s.__dn||s.fullName||"Sem nome")}<small>${esc([s.class,s.enrollmentNumber].filter(Boolean).join(" · "))}</small></div></div>`}).join("");
+    rescale($("grid"));fitNames($("grid"));
+  }
+  if(tab==="tpl"){
+    const s=picked.size?students[[...picked][0]]:students[0]||SAMPLE[0];
+    $("gal").innerHTML=templates.map(t=>`<div class="tt${t.id===activeId?" on":""}" data-id="${t.id}"><div class="tw" data-sc><div class="stage">${fill(t.html,s)}</div></div>${esc(t.name)}</div>`).join("");
+    rescale($("gal"));fitNames($("gal"));
+  }
+}
+function fillValues(){const by=$("by").value,sel=$("val");if(!by){sel.innerHTML="";sel.disabled=true;return}
+  sel.innerHTML=`<option value="">Todos</option>`+[...new Set(students.map(s=>String(s[by]??"")).filter(Boolean))].map(v=>`<option>${esc(v)}</option>`).join("");sel.disabled=false}
+$("grid").addEventListener("change",e=>{const c=e.target.dataset.ck;if(c===undefined)return;e.target.checked?picked.add(+c):picked.delete(+c);$("selN").textContent=picked.size;$("editSel").disabled=!picked.size;$("expSel").disabled=!picked.size});
+$("grid").addEventListener("click",e=>{const w=e.target.closest("[data-open]");if(w)openMd(+w.dataset.open)});
+$("selVis").onclick=()=>{vis().forEach(i=>picked.add(i));render()};
+$("selNone").onclick=()=>{picked.clear();render()};
+$("editSel").onclick=()=>openMd([...picked]);
+$("q").oninput=render;$("by").onchange=()=>{fillValues();render()};$("val").onchange=render;
+
+/* ===== importar ===== */
+const STD=[["fullName","Nome completo"],["enrollmentNumber","Nº de matrícula"],["class","Turma"],["grade","Classe / Ano"],["course","Curso"],["period","Período"],["room","Sala"],["photoUrl","URL da foto"]];
+const ALIAS={fullName:["fullName","nome","name","nomeCompleto","aluno"],enrollmentNumber:["enrollmentNumber","matricula","numero","id"],class:["class","turma"],grade:["grade","classe","ano"],course:["course","curso"],period:["period","periodo","turno"],room:["room","sala"],photoUrl:["photoUrl","foto","photo","imagem","image"]};
+const rawKeys=()=>[...new Set(rawStudents.slice(0,30).flatMap(s=>Object.keys(s||{})))].filter(k=>!k.startsWith("__"));
+function autoMap(){const ks=rawKeys();STD.forEach(([k])=>{if(mapping[k]&&ks.includes(mapping[k]))return;mapping[k]=ALIAS[k].find(a=>ks.includes(a))||""})}
+function norm(s){const o={...s};STD.forEach(([k])=>{const m=mapping[k];if(m&&s[m]!==undefined)o[k]=s[m]});return o}
+function buildMap(){const ks=rawKeys();
+  $("mapGrid").innerHTML=STD.map(([k,l])=>`<label>${l}</label><select data-m="${k}"><option value="">(nenhum)</option>${ks.map(x=>`<option${mapping[k]===x?" selected":""}>${esc(x)}</option>`).join("")}</select>`).join("");
+  $("mapGrid").querySelectorAll("select").forEach(s=>s.onchange=()=>{mapping[s.dataset.m]=s.value;students=rawStudents.map(norm);persist();fillValues();render()})}
+function parseJSON(text){const msg=$("msg");msg.className="msg";
+  try{const d=JSON.parse(text);
+    if(!Array.isArray(d))throw new Error("formato");
+    if(!d.length)throw new Error("vazio");
+    if(!d.every(x=>x&&typeof x==="object"))throw new Error("formato");
+    rawStudents=d;autoMap();students=d.map(norm);picked.clear();buildMap();fillValues();persist();render();
+    msg.textContent=students.some(s=>s.fullName)?`${d.length} alunos carregados.`:`${d.length} itens lidos. Escolha o campo do nome em "Ligar colunas do ficheiro".`;
+  }catch(e){msg.className="msg err";msg.textContent="Não foi possível ler a lista. Confirme que está completa e no formato certo."}}
+$("load").onclick=()=>parseJSON($("json").value);
+let typing;$("json").addEventListener("input",()=>{clearTimeout(typing);typing=setTimeout(()=>{const v=$("json").value.trim();if(v)parseJSON(v)},500)});
+$("sample").onclick=()=>{$("json").value=JSON.stringify(SAMPLE,null,2);parseJSON($("json").value)};
+$("file").onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>{$("json").value=t;parseJSON(t)})};
+$("photos").onchange=async e=>{for(const f of e.target.files)photos[f.name.replace(/\.[^.]+$/,"")]=await readFile(f);render()};
+$("logoFile").onchange=async e=>{const f=e.target.files[0];if(f){logo=await readFile(f);persist();render()}};
+$("logoReset").onclick=()=>{logo=DEFAULT_LOGO;persist();render()};
+$("logoCut").onclick=()=>cutLogo($("logoMsg"));
+$("sigFile").onchange=async e=>{const f=e.target.files[0];if(f){sig=await readFile(f);persist();render()}};
+SCH.forEach(([id])=>$(id).oninput=()=>{persist();render()});
+document.querySelectorAll(".box h2").forEach(h=>h.onclick=()=>h.parentElement.classList.toggle("closed"));
+$("abAll").onclick=()=>applyAbbr(students.map((s,i)=>i),$("abm").value);
+$("abVis").onclick=()=>applyAbbr(vis(),$("abm").value);
+$("abSel").onclick=()=>picked.size?applyAbbr([...picked],$("abm").value):($("abmsg").textContent="Selecione cartões primeiro.");
+
+/* ===== offcanvas do cartão ===== */
+let mdT=null,pLogo=null,pSig=null,pPhoto=null;
+const bd=$("bd");
+function closeAll(){$("md").classList.remove("open");$("ep").classList.remove("open");bd.hidden=true}
+bd.onclick=closeAll;$("mdX").onclick=closeAll;$("epX").onclick=closeAll;
+function openMd(t){
+  mdT=t;pLogo=pSig=pPhoto=null;const bulk=Array.isArray(t),s=bulk?{}:students[t],o=s.__o||{};
+  $("mdT").textContent=bulk?`Editar ${t.length} cartões`:(s.__dn||s.fullName||"Cartão");
+  const f=(k,l,v)=>`<label>${l}</label><input type="text" data-k="${k}" value="${esc(v??"")}">`;
+  const ov=(k,l,g)=>`<label>${l}</label><input type="text" data-o="${k}" value="${esc(o[k]||"")}" placeholder="${esc(g)}">`;
+  $("mdB").innerHTML=(bulk?`<div class="msg">Só os campos preenchidos são aplicados aos ${t.length} cartões.</div>`:`<div class="wrap" data-sc style="cursor:default;margin-bottom:6px">${stageHTML(s)}</div>`+
+    f("fullName","Nome completo",s.fullName)+f("enrollmentNumber","Nº de matrícula",s.enrollmentNumber)+f("class","Turma",s.class)+f("grade","Classe",s.grade)+f("course","Curso",s.course)+f("period","Período",s.period)+f("__dn","Nome no cartão (vazio = completo)",s.__dn))+
+   `<label>Resumir nome</label><select data-k="__abbr"><option value="">(manter)</option><option value="fl">Primeiro + último</option><option value="fm">Primeiro + iniciais + último</option><option value="fi">Iniciais + último</option><option value="full">Nome completo</option></select>
+    <label>Modelo</label><select data-k="__tpl"><option value="">${bulk?"(manter)":"(modelo padrão)"}</option>${bulk?'<option value="__def">Usar modelo padrão</option>':""}${templates.map(x=>`<option value="${x.id}"${!bulk&&s.__tpl===x.id?" selected":""}>${esc(x.name)}</option>`).join("")}</select>
+    <h3 style="font-size:14px;margin:16px 0 0">Textos deste cartão</h3>`+
+   ov("room","Sala",$("sRoom").value||"")+ov("schoolName","Escola",$("sName").value)+ov("subtitle","Subtítulo",$("sSub").value)+ov("address","Endereço (rodapé)",$("sAddr").value)+ov("phones","Telefones (rodapé)",$("sTel").value)+ov("title","Título",$("sTitle").value)+ov("dirLabel","Legenda da assinatura",$("sDir").value)+
+   `<div class="row"><label class="btn alt" style="margin:0">Logótipo<input type="file" id="mdLogo" accept="image/*"></label><button class="alt" id="mdCut">Remover fundo do logótipo</button>
+    <label class="btn alt" style="margin:0">Assinatura<input type="file" id="mdSig" accept="image/*"></label>${bulk?"":`<label class="btn alt" style="margin:0">Foto<input type="file" id="mdPh" accept="image/*"></label>`}</div><div class="msg" id="mdMsg"></div>`;
+  $("mdLogo").onchange=async e=>{if(e.target.files[0]){pLogo=await readFile(e.target.files[0]);$("mdMsg").textContent="Logótipo carregado (guarde)."}};
+  $("mdSig").onchange=async e=>{if(e.target.files[0]){pSig=await readFile(e.target.files[0]);$("mdMsg").textContent="Assinatura carregada (guarde)."}};
+  if($("mdPh"))$("mdPh").onchange=async e=>{if(e.target.files[0]){pPhoto=await readFile(e.target.files[0]);$("mdMsg").textContent="Foto carregada (guarde)."}};
+  $("mdCut").onclick=async()=>{try{const base=pLogo||(!bulk&&o.logo)||logo;await toData(base);pLogo=await cut(imgCache[base]||base,+$("tol").value||40);$("mdMsg").className="msg";$("mdMsg").textContent="Fundo removido (guarde)."}catch(e){$("mdMsg").className="msg err";$("mdMsg").textContent=e&&e.message==="transp"?"Já é transparente.":"Não foi possível processar a imagem. Carregue o ficheiro."}};
+  $("md").classList.add("open");bd.hidden=false;rescale($("mdB"));fitNames($("mdB"));
+}
+$("mdSave").onclick=()=>{
+  const bulk=Array.isArray(mdT),idx=bulk?mdT:[mdT],q=s=>[...$("mdB").querySelectorAll(s)];
+  idx.forEach(i=>{
+    q("[data-k]").forEach(el=>{const k=el.dataset.k,v=el.value;
+      if(k==="__abbr"){if(v)setS(i,"__dn",abbr(students[i].fullName,v));return}
+      if(k==="__tpl"){if(v==="__def")setS(i,"__tpl","");else if(v||!bulk)setS(i,"__tpl",v);return}
+      if(bulk&&v==="")return;setS(i,k,v)});
+    const o={...(students[i].__o||{})};q("[data-o]").forEach(el=>{if(el.value!=="")o[el.dataset.o]=el.value;else if(!bulk)delete o[el.dataset.o]});
+    if(pLogo)o.logo=pLogo;if(pSig)o.signature=pSig;setS(i,"__o",o);if(pPhoto&&!bulk)setS(i,"__photo",pPhoto);
+  });
+  persist();fillValues();closeAll();render();
+};
+$("mdClr").onclick=()=>{(Array.isArray(mdT)?mdT:[mdT]).forEach(i=>{["__o","__tpl","__dn","__photo"].forEach(k=>{delete students[i][k];delete rawStudents[i][k]})});persist();closeAll();render()};
+
+/* ===== separadores ===== */
+function show(n){tab=n;document.querySelectorAll(".tab").forEach(t=>t.hidden=t.id!=="t_"+n);document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===n));closeAll();render();if(n==="tpl")openEd();scrollTo(0,0)}
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>show(b.dataset.t));
+
+/* ===== galeria de modelos ===== */
+$("gal").addEventListener("click",e=>{const d=e.target.closest(".tt");if(!d)return;persist();activeId=d.dataset.id;tpl=cur().html;persist();render();openEd()});
+const uid=()=>"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+function addTemplate(name,html){persist();const t={id:uid(),name,html};templates.push(t);activeId=t.id;tpl=html;persist();render();openEd()}
+$("tNew").onclick=()=>addTemplate("Novo modelo",BLANK_TPL);
+$("tDup").onclick=()=>addTemplate(cur().name+" (cópia)",tpl);
+$("tDel").onclick=()=>{if(templates.length<2)return;templates=templates.filter(t=>t.id!==activeId);students.forEach((s,i)=>{if(s.__tpl&&!templates.some(t=>t.id===s.__tpl))setS(i,"__tpl","")});activeId=templates[0].id;tpl=cur().html;persist();render();openEd()};
+const setAll=(idx,v)=>{idx.forEach(i=>setS(i,"__tpl",v));persist();render();$("tmsg").textContent=`Modelo aplicado a ${idx.length} cartões.`};
+$("tAll").onclick=()=>setAll(students.map((s,i)=>i),activeId);
+$("tSel").onclick=()=>picked.size?setAll([...picked],activeId):($("tmsg").textContent="Selecione cartões no separador Edição.");
+$("tClr").onclick=()=>setAll(students.map((s,i)=>i),"");
+const dl=(data,name)=>{const a=document.createElement("a");a.href=URL.createObjectURL(data);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
+const expT=(l,n)=>{persist();dl(new Blob([JSON.stringify({app:"eduall-cards-templates",version:1,templates:l},null,2)],{type:"application/json"}),n)};
+$("tExp").onclick=()=>expT(templates,"modelos-eduall-cards.json");
+$("tExp1").onclick=()=>expT([cur()],"modelo-"+slug(cur().name)+".json");
+$("tImp").onchange=async e=>{const f=e.target.files[0];if(!f)return;
+  try{const p=JSON.parse(await f.text()),arr=(Array.isArray(p)?p:p.templates||(p.html?[p]:[])).filter(t=>t&&typeof t.html==="string");
+    if(!arr.length)throw new Error("nenhum modelo válido encontrado.");
+    persist();arr.forEach(t=>templates.push({id:uid(),name:t.name||"Importado",html:t.html}));activeId=templates[templates.length-1].id;tpl=cur().html;persist();render();openEd();
+    $("tmsg").className="msg";$("tmsg").textContent=`${arr.length} modelo(s) importado(s).`}
+  catch(err){$("tmsg").className="msg err";$("tmsg").textContent="Ficheiro de modelos inválido."}e.target.value=""};
+
+/* ===== editor ===== */
+const est=$("est");let tdom,sel=-1,hist=[],scale=1,propsFor=-1,rt;
+const PR=[["Esquerda (x)","left","px"],["Topo (y)","top","px"],["Largura","width","px"],["Altura","height","px"],["Tamanho do texto","fontSize","px"],["Peso (300-800)","fontWeight",""],["Raio dos cantos","borderRadius","px"],["Cor do texto","color","c"],["Cor de fundo","backgroundColor","c"],["Espessura da borda","borderWidth","px"],["Cor da borda","borderColor","c"],["Alinhamento","textAlign","s:left,center,right"],["Ajuste da imagem","objectFit","s:cover,contain,fill"],["Opacidade","opacity",""]];
+const RD={borderWidth:"borderTopWidth",borderColor:"borderTopColor"};
+const ADD={text:'<div style="left:200px;top:300px;font-size:24px;font-weight:600;color:#111111;white-space:nowrap">Novo texto</div>',
+  rect:'<div style="left:200px;top:300px;width:200px;height:80px;background-color:#111111"></div>',
+  circle:'<div style="left:200px;top:300px;width:120px;height:120px;border-radius:50%;background-color:#111111"></div>',
+  line:'<div style="left:200px;top:300px;width:300px;height:3px;background-color:#111111"></div>'};
+const rgb2hex=c=>{const m=(c||"").match(/[\d.]+/g);if(!m||(m.length>3&&+m[3]===0))return"#ffffff";return"#"+m.slice(0,3).map(n=>(+n|0).toString(16).padStart(2,"0")).join("")};
+function efit(){const c=$("ec");scale=Math.max(.2,Math.min(1,(c.clientWidth-24)/1024,(c.clientHeight-24)/640));$("ewrap").style.width=1024*scale+"px";$("ewrap").style.height=640*scale+"px";est.style.transform=`scale(${scale})`}
+function draw(){est.innerHTML=fill(tdom.innerHTML,students[0]||SAMPLE[0]);[...est.children].forEach((c,i)=>c.dataset.i=i);fitNames(est);drawSel()}
+function drawSel(){const b=$("selbox"),el=est.children[sel];
+  if(!el||el.tagName==="STYLE"){b.style.display="none";propsFor=-1;$("props").innerHTML='<div class="msg">Toque num elemento do cartão para o editar.</div>';return}
+  const r=el.getBoundingClientRect(),w=$("ewrap").getBoundingClientRect();
+  Object.assign(b.style,{display:"block",left:r.left-w.left+"px",top:r.top-w.top+"px",width:r.width+"px",height:r.height+"px"});
+  if(propsFor!==sel){buildProps();propsFor=sel}syncProps()}
+function buildProps(){
+  const el=tdom.children[sel],isImg=/^(IMG)$/i.test(el.tagName),txt=!/^(IMG|svg)$/i.test(el.tagName);
+  $("props").innerHTML=(txt?'<label for="pText">Texto (pode usar {{campos}})</label><textarea id="pText" style="height:70px"></textarea>':"")
+   +PR.map(([l,k,u])=>`<div class="pr"><span>${l}</span>${u.startsWith("s:")?`<select data-p="${k}">${u.slice(2).split(",").map(o=>`<option>${o}</option>`).join("")}</select>`:`<input data-p="${k}" data-u="${u}" type="${u==="c"?"color":u==="px"?"number":"text"}">`}</div>`).join("")
+   +'<div class="row"><button class="alt" id="eNoBg">Sem cor de fundo</button>'+(isImg?'<button class="alt" id="eCut">Remover fundo da imagem</button>':"")+'</div>';
+  if(txt)$("pText").value=el.innerHTML;
+  $("eNoBg").onclick=()=>{tdom.children[sel].style.backgroundColor="transparent";tdom.children[sel].style.padding="0";commit()};
+  if(isImg)$("eCut").onclick=async()=>{const m=tdom.children[sel],src=m.getAttribute("src")||"",ms=$("eMsg");ms.className="msg";
+    try{if(/\{\{logo\}\}/.test(src))await cutLogo(ms);else if(src.startsWith("data:")){m.src=await cut(src,+$("tol").value||40);commit()}else{ms.textContent="Esta imagem é um campo (foto/assinatura); só logótipo ou imagens adicionadas."}}
+    catch(e){ms.className="msg err";ms.textContent=e&&e.message==="transp"?"Já é transparente.":"Não foi possível processar."}};
+}
+function syncProps(){const t=est.children[sel];if(!t)return;const cs=getComputedStyle(t);
+  $("props").querySelectorAll("[data-p]").forEach(i=>{if(i===document.activeElement)return;const v=cs[RD[i.dataset.p]||i.dataset.p];
+    i.value=i.dataset.u==="px"?(Math.round(parseFloat(v))||0):i.dataset.u==="c"?rgb2hex(v):v==="start"?"left":v})}
+function commit(skipCode){hist.push(tpl);if(hist.length>60)hist.shift();tpl=tdom.innerHTML;persist();if(!skipCode)$("code").value=tpl;draw();clearTimeout(rt);rt=setTimeout(render,250)}
+function undo(){if(!hist.length)return;tpl=tdom.innerHTML=hist.pop();persist();$("code").value=tpl;if(sel>=tdom.children.length)sel=-1;propsFor=-1;draw()}
+function addEl(h){tdom.insertAdjacentHTML("beforeend",h);sel=tdom.children.length-1;commit()}
+function mirror(list){list.forEach(i=>{const t=est.children[i],m=tdom.children[i];if(!t||!m||t.tagName==="STYLE")return;
+  const w=Math.round(t.getBoundingClientRect().width/scale),cs=getComputedStyle(t),l=parseFloat(cs.left)||0;
+  if(!m.style.width){m.style.width=w+"px";if(!/^(IMG|svg)$/i.test(m.tagName))m.style.textAlign=cs.textAlign==="center"?"center":"right"}
+  else if(m.style.textAlign==="left")m.style.textAlign="right";else if(m.style.textAlign==="right")m.style.textAlign="left";
+  m.style.left=Math.round(1024-l-w)+"px"});commit()}
+$("eMirAll").onclick=()=>mirror([...tdom.children].map((c,i)=>i));
+$("eMir").onclick=()=>{if(sel>=0)mirror([sel])};
+function startDrag(e,node,mode){
+  const t=est.children[sel],m=tdom.children[sel],cs=getComputedStyle(t),rc=t.getBoundingClientRect();
+  const o={x:e.clientX,y:e.clientY,l:parseFloat(cs.left)||0,t:parseFloat(cs.top)||0,w:rc.width/scale,h:rc.height/scale};
+  let moved=false;node.setPointerCapture(e.pointerId);
+  const set=(k,v)=>{t.style[k]=m.style[k]=Math.round(v)+"px"};
+  const mv=ev=>{moved=true;const dx=(ev.clientX-o.x)/scale,dy=(ev.clientY-o.y)/scale;
+    if(mode==="move"){set("left",o.l+dx);set("top",o.t+dy)}else{set("width",Math.max(4,o.w+dx));set("height",Math.max(4,o.h+dy))}drawSel()};
+  const up=()=>{node.removeEventListener("pointermove",mv);node.removeEventListener("pointerup",up);if(moved)commit()};
+  node.addEventListener("pointermove",mv);node.addEventListener("pointerup",up)}
+est.addEventListener("pointerdown",e=>{let t=e.target;while(t&&t.parentElement!==est)t=t.parentElement;
+  if(!t||t.tagName==="STYLE"){sel=-1;drawSel();return}sel=+t.dataset.i;drawSel();startDrag(e,est,"move")});
+$("hdl").addEventListener("pointerdown",e=>{e.stopPropagation();e.preventDefault();startDrag(e,$("hdl"),"size")});
+$("props").addEventListener("input",e=>{const t=e.target,el=tdom.children[sel];if(!el)return;
+  if(t.id==="pText")el.innerHTML=t.value;
+  else if(t.dataset.p){const p=t.dataset.p;el.style[p]=t.dataset.u==="px"&&t.value!==""?t.value+"px":t.value;if(p==="borderWidth"||p==="borderColor"){el.style.borderStyle="solid";el.style.boxSizing="border-box"}}
+  else return;commit()});
+let ct;$("code").addEventListener("input",()=>{clearTimeout(ct);ct=setTimeout(()=>{tdom.innerHTML=$("code").value;sel=-1;propsFor=-1;commit(true)},500)});
+document.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>addEl(ADD[b.dataset.add]));
+$("eField").onchange=e=>{if(e.target.value)addField(e.target.value,200,300);e.target.value=""};
+$("eImg").onchange=async e=>{const f=e.target.files[0];if(!f)return;addEl(`<img src="${await readFile(f)}" style="left:200px;top:200px;width:200px;height:200px;object-fit:contain">`);e.target.value=""};
+$("eUndo").onclick=undo;
+$("eReset").onclick=()=>{tdom.innerHTML=(FACTORY.find(f=>f.id===activeId)||{html:BLANK_TPL}).html;sel=-1;propsFor=-1;commit()};
+$("eDel").onclick=()=>{const m=tdom.children[sel];if(!m)return;m.remove();sel=-1;commit()};
+$("eDup").onclick=()=>{const m=tdom.children[sel];if(!m)return;const c=m.cloneNode(true),cs=getComputedStyle(est.children[sel]);c.style.left=(parseFloat(cs.left)+20)+"px";c.style.top=(parseFloat(cs.top)+20)+"px";m.after(c);sel++;commit()};
+$("eFront").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.appendChild(m);sel=tdom.children.length-1;commit()};
+$("eBack").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.prepend(m);sel=0;commit()};
+$("eProps").onclick=()=>{$("ep").classList.add("open");bd.hidden=false};
+function openEd(){
+  tdom=document.createElement("div");tdom.innerHTML=tpl;hist=[];sel=-1;propsFor=-1;
+  const keys=[...new Set([...FIELDS,...Object.keys(students[0]||{}).filter(k=>!k.startsWith("__"))])];
+  $("eField").innerHTML='<option value="">+ Campo…</option>'+keys.map(k=>`<option value="${esc(k)}">{{${esc(k)}}}</option>`).join("");
+  $("code").value=tpl;$("eName").value=cur().name;buildChips();efit();draw()}
+$("eName").oninput=e=>{cur().name=e.target.value;persist()};
+window.addEventListener("resize",()=>{if(tab==="tpl"){efit();drawSel()}rescale(document)});
+document.addEventListener("keydown",e=>{
+  if(tab!=="tpl"||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+  if((e.ctrlKey||e.metaKey)&&e.key==="z"){undo();e.preventDefault();return}
+  const m=tdom.children[sel];if(!m)return;
+  if(e.key==="Delete"||e.key==="Backspace"){$("eDel").click();e.preventDefault();return}
+  const s=e.shiftKey?10:1,d={ArrowLeft:["left",-s],ArrowRight:["left",s],ArrowUp:["top",-s],ArrowDown:["top",s]}[e.key];
+  if(d){m.style[d[0]]=(parseFloat(getComputedStyle(est.children[sel])[d[0]])+d[1])+"px";commit();e.preventDefault()}});
+const FIELDS=["fullName","enrollmentNumber","class","grade","course","period","room","initials","photo","logo","signature","schoolName","subtitle","address","phones","title","dirLabel","barcode"];
+const IMGF=["photo","logo","signature","barcode"];
+function addField(k,x,y){let h;
+  if(IMGF.includes(k))h=`<img src="{{${k}}}" onerror="this.style.visibility='hidden'" style="left:${x}px;top:${y}px;width:160px;height:160px;object-fit:cover">`;
+  else{h=ADD.text.replace("left:200px;top:300px",`left:${x}px;top:${y}px`).replace("Novo texto",`{{${k}}}`);
+    if($("eLbl").checked)h=ADD.text.replace("left:200px;top:300px",`left:${x}px;top:${Math.max(0,y-24)}px`).replace("font-size:24px;font-weight:600;color:#111111","font-size:14px;font-weight:400;color:#777777").replace("Novo texto",esc(k))+h}
+  addEl(h)}
+function buildChips(){const keys=[...new Set([...FIELDS.filter(k=>k!=="initials"),...rawKeys()])];
+  $("chips").innerHTML=keys.map(k=>`<span class="chip" draggable="true" data-k="${esc(k)}">${esc(k)}</span>`).join("");
+  $("chips").querySelectorAll(".chip").forEach(c=>{c.ondragstart=e=>e.dataTransfer.setData("text/plain",c.dataset.k);c.onclick=()=>addField(c.dataset.k,200,300)})}
+const ew=$("ewrap");ew.addEventListener("dragover",e=>e.preventDefault());
+ew.addEventListener("drop",e=>{e.preventDefault();const k=e.dataTransfer.getData("text/plain");if(!k)return;const r=ew.getBoundingClientRect();addField(k,Math.round((e.clientX-r.left)/scale),Math.round((e.clientY-r.top)/scale))});
+
+/* ===== PDF (imagens corrigidas) ===== */
+let curBtn=null;
+function prog(i,n,txt){if(curBtn!==$("expAll"))return;curBtn.style.setProperty("--pg",(n?i/n*100:0)+"%");$("expAllT").textContent=txt}
+let skipped=0;
+async function makePDF(list,name){
+  const {jsPDF}=window.jspdf,holder=$("off"),bar=$("bar"),pm=$("pmsg"),N=list.length,CH=120;
+  const phOf=s=>photos[s.enrollmentNumber]||s.__photo||s.photoUrl;
+  bar.style.display="block";pm.textContent="A preparar as imagens…";prog(0,N,"A preparar imagens…");
+  const urls=[...new Set([logo,...list.flatMap(s=>[phOf(s),s.__o&&s.__o.logo])].filter(Boolean))];let d=0;skipped=0;
+  await pool(urls,4,async u=>{await toData(u);d++;pm.textContent=`A preparar imagens… ${d} de ${urls.length}`;prog(0,N,`Imagens ${d}/${urls.length}`)});
+  const parts=Math.ceil(N/CH);let n=0;
+  for(let p=0;p<parts;p++){
+    const pdf=new jsPDF({orientation:"landscape",unit:"mm",format:[85.6,54]});let first=true;
+    for(const s of list.slice(p*CH,(p+1)*CH)){
+      const u=phOf(s);if(u&&!u.startsWith("data:")&&!imgCache[u])await toData(u);
+      let c=null;
+      for(let t=0;t<2&&!c;t++){try{holder.innerHTML=stageHTML(s);const el=holder.firstElementChild,imgs=[...el.querySelectorAll("img")];
+        await Promise.all(imgs.map(rast));await Promise.all(imgs.map(ready));await document.fonts.ready;fitNames(el);
+        c=await html2canvas(el,{scale:1.5,useCORS:true,backgroundColor:"#ffffff",logging:false,scrollX:0,scrollY:0,imageTimeout:20000})}catch(e){await sleep(300)}}
+      if(c){if(!first)pdf.addPage([85.6,54],"landscape");first=false;pdf.addImage(c.toDataURL("image/jpeg",.9),"JPEG",0,0,85.6,54)}else skipped++;
+      c=null;n++;bar.firstElementChild.style.width=(n/N*100)+"%";pm.textContent=`A criar ${n} de ${N}…`;prog(n,N,`${n} de ${N} cartões (${Math.round(n/N*100)}%)`);
+      if(n%4===0)await sleep(0)}
+    holder.innerHTML="";if(!first)dl(pdf.output("blob"),parts>1?`${name}-parte-${p+1}.pdf`:name+".pdf");
+    if(p<parts-1)await sleep(500)}
+  failed=list.filter(s=>{const u=phOf(s);return u&&!u.startsWith("data:")&&!imgCache[u]}).length}
+async function run(job,btn){
+  curBtn=btn||null;if(btn===$("expAll")){btn.classList.add("busy");prog(0,1,"A começar…")}
+  const btns=document.querySelectorAll("#exp,#expSel,#expAll,#expGroups");btns.forEach(b=>b.disabled=true);failed=0;
+  try{await job();$("pmsg").textContent=(skipped?`${skipped} cartão(ões) não puderam ser criados. `:"")+(failed?`PDF pronto, mas ${failed} cartão(ões) ficaram sem foto porque o servidor das fotos bloqueou o acesso. Carregue as fotos na app (Alunos › Carregar fotos dos alunos) e exporte de novo.`:(skipped?"":"PDF pronto.")); if(students.length>120&&btn===$("expAll"))$("pmsg").textContent+=" Os cartões foram divididos em vários PDFs de até 120 cartões."}
+  catch(e){$("pmsg").textContent="Não foi possível criar o PDF. Tente novamente."}
+  setTimeout(()=>{$("bar").style.display="none";$("bar").firstElementChild.style.width="0"},800);
+  if(btn===$("expAll")){btn.classList.remove("busy");btn.style.removeProperty("--pg");$("expAllT").textContent="Baixar todos (PDF)"}curBtn=null;render()}
+$("exp").onclick=()=>run(()=>makePDF(vis().map(i=>students[i]),"cartoes-filtro"));
+$("expSel").onclick=()=>run(()=>makePDF([...picked].sort((a,b)=>a-b).map(i=>students[i]),"cartoes-selecionados"));
+$("expAll").onclick=()=>run(()=>makePDF(students,"cartoes-todos"),$("expAll"));
+$("expGroups").onclick=()=>run(async()=>{const by=$("gby").value;
+  for(const g of new Set(students.map(s=>String(s[by]??"sem-valor"))))await makePDF(students.filter(s=>String(s[by]??"sem-valor")===g),"cartoes-"+by+"-"+slug(g))});
+
+/* ===== projeto e formato ===== */
+const FMT=JSON.stringify([{fullName:"Nzinga Maria Kiala",enrollmentNumber:"2026-0001",class:"10ª A",grade:"10ª Classe",course:"Informática",period:"Manhã",room:"14",photoUrl:"https://exemplo.com/fotos/0001.jpg",birthDate:"2010-05-14"},{fullName:"Mavungo Pedro Nsimba",enrollmentNumber:"2026-0002",class:"10ª A",grade:"10ª Classe",course:"Informática",period:"Manhã",room:"14",photoUrl:"data:image/jpeg;base64,/9j/4AAQ..."}],null,2);
+$("fmt").textContent=FMT;
+$("fCopy").onclick=async()=>{try{await navigator.clipboard.writeText(FMT);$("jmsg").textContent="Exemplo copiado."}catch(e){$("jmsg").textContent="Não foi possível copiar."}};
+$("fDown").onclick=()=>dl(new Blob([FMT],{type:"application/json"}),"alunos-exemplo.json");
+$("pExp").onclick=async()=>{const j=$("jmsg");j.textContent="A preparar imagens…";
+  await Promise.all([...new Set([logo,...students.map(s=>s.photoUrl)].filter(Boolean))].map(toData));
+  const emb={};students.forEach(s=>{const u=s.photoUrl;if(u&&imgCache[u]&&s.enrollmentNumber)emb[s.enrollmentNumber]=imgCache[u]});persist();
+  dl(new Blob([JSON.stringify({app:"eduall-cards",version:3,exportedAt:new Date().toISOString(),school:schoolData(),logo:imgCache[logo]||logo,signature:sig,mapping,templates,activeTemplate:activeId,students:rawStudents,photos:{...emb,...photos}},null,2)],{type:"application/json"}),"projeto-eduall-cards.json");
+  j.textContent="Projeto guardado."};
+$("pImp").onchange=async e=>{const f=e.target.files[0];if(!f)return;const j=$("jmsg");
+  try{const p=JSON.parse(await f.text());
+    if(!["eduall-cards","cartoes-estudante"].includes(p.app))throw new Error("este ficheiro não é um projeto desta app.");
+    applySchool(p.school);logo=p.logo||DEFAULT_LOGO;sig=p.signature||null;mapping=p.mapping||{};photos=p.photos||{};
+    if(Array.isArray(p.templates)&&p.templates.length){templates=p.templates;activeId=templates.some(t=>t.id===p.activeTemplate)?p.activeTemplate:templates[0].id;tpl=cur().html}
+    rawStudents=Array.isArray(p.students)?p.students:[];students=rawStudents.map(norm);picked.clear();
+    $("json").value="";buildMap();fillValues();persist();render();
+    j.className="msg";j.textContent=`Projeto importado: ${students.length} alunos e ${templates.length} modelos.`}
+  catch(err){j.className="msg err";j.textContent="Não foi possível importar este ficheiro."}e.target.value=""};
+
+/* ===== ícones nos botões ===== */
+(function(){
+const pre=(el,n)=>el&&el.insertAdjacentHTML("afterbegin",`<i class="bi bi-${n}"></i>`);
+const IC={load:"check2",sample:"stars",logoReset:"arrow-counterclockwise",logoCut:"eraser",abAll:"people",abVis:"eye",abSel:"check2-square",exp:"download",expSel:"download",expAll:"download",expGroups:"folder2",pExp:"save",fCopy:"copy",fDown:"file-earmark-arrow-down",selVis:"check2-all",selNone:"x-lg",editSel:"pencil",tNew:"plus-lg",tDup:"files",tDel:"trash",tExp1:"box-arrow-up",tExp:"box-arrow-up",tAll:"check2",tSel:"check2-square",tClr:"arrow-counterclockwise",mdSave:"check2",mdClr:"eraser",mdX:"x-lg",epX:"x-lg",eMirAll:"symmetry-vertical",eUndo:"arrow-counterclockwise",eReset:"arrow-repeat",eProps:"sliders",eMir:"symmetry-vertical",eDup:"files",eDel:"trash",eFront:"layer-forward",eBack:"layer-backward"};
+const LB={file:"file-earmark-arrow-up",photos:"images",logoFile:"image",sigFile:"pen",pImp:"folder2-open",tImp:"box-arrow-in-down",eImg:"image"};
+Object.entries(IC).forEach(([id,n])=>pre($(id),n));
+Object.entries(LB).forEach(([id,n])=>pre($(id).parentElement,n));
+})();
+
+/* ===== arranque ===== */
+if(saved&&Array.isArray(saved.students)&&saved.students.length){rawStudents=saved.students;autoMap();students=rawStudents.map(norm)}
+buildMap();fillValues();render();
+</script>
+</body>
+</html>

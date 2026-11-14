@@ -202,8 +202,12 @@ const picked=new Set(),imgCache={};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fold=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 const slug=s=>fold(s).replace(/[^\w]+/g,"-");
+/* remove "visibility:hidden" que versões anteriores gravavam por engano nos modelos (era isso que fazia a imagem desaparecer) */
+const clean=h=>String(h||"").replace(/visibility:\s*hidden;?\s*/gi,"");
+/* documento inerte: as imagens do modelo ({{photo}} etc.) nunca são carregadas aqui, por isso o onerror nunca dispara no editor */
+const INERT=document.implementation.createHTMLDocument("");
 
-/* ===== imagens: copia segura para o PDF (corrigido) ===== */
+/* ===== imagens: copia segura para o PDF ===== */
 const b2d=b=>new Promise((ok,no)=>{const f=new FileReader();f.onload=()=>ok(f.result);f.onerror=no;f.readAsDataURL(b)});
 const viaFetch=async s=>{const r=await fetch(s,{mode:"cors",cache:"no-store"});if(!r.ok)throw 0;return b2d(await r.blob())};
 const viaImg=s=>new Promise((ok,no)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>{try{const c=document.createElement("canvas");c.width=i.naturalWidth;c.height=i.naturalHeight;c.getContext("2d").drawImage(i,0,0);ok(c.toDataURL("image/png"))}catch(e){no(e)}};i.onerror=no;i.src=s});
@@ -221,8 +225,35 @@ async function toData(u){
   for(const t of tries){try{const d=await t();if(d&&/^data:image\//.test(d)){imgCache[u]=await shrink(d);return true}}catch(e){}}
   return false;
 }
-async function rast(img){const s=img.getAttribute("src")||"";if(!/^data:image\/svg/.test(s))return;
-  try{const i=new Image();await new Promise((ok,no)=>{i.onload=ok;i.onerror=no;i.src=s});const w=(i.naturalWidth||300)*3,h=(i.naturalHeight||100)*3,c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(i,0,0,w,h);img.src=c.toDataURL("image/png")}catch(e){}}
+
+/* ===== object-fit no PDF =====
+   O html2canvas não respeita object-fit / object-position. Antes de fotografar o cartão,
+   cada <img> é desenhada num canvas com o modo certo (fill, cover, contain, none, scale-down)
+   e a imagem é substituída por esse resultado já recortado/ajustado, com object-fit:fill. */
+function loadImg(src){return new Promise(ok=>{const i=new Image();if(!src.startsWith("data:"))i.crossOrigin="anonymous";const t=setTimeout(()=>ok(null),8000);i.onload=()=>{clearTimeout(t);ok(i)};i.onerror=()=>{clearTimeout(t);ok(null)};i.src=src})}
+const posPart=(v,free)=>/%$/.test(v)?free*parseFloat(v)/100:(parseFloat(v)||0);
+async function bake(img){
+  try{
+    const src=img.getAttribute("src")||"";if(!src)return;
+    const cs=getComputedStyle(img);if(cs.visibility==="hidden"||cs.display==="none")return;
+    const r=img.getBoundingClientRect(),f=n=>parseFloat(cs[n])||0;
+    const cw=r.width-f("borderLeftWidth")-f("borderRightWidth")-f("paddingLeft")-f("paddingRight"),
+          ch=r.height-f("borderTopWidth")-f("borderBottomWidth")-f("paddingTop")-f("paddingBottom");
+    if(cw<1||ch<1)return;
+    const i=await loadImg(src);if(!i)return;
+    const nw=i.naturalWidth||cw,nh=i.naturalHeight||ch,fit=cs.objectFit||"fill";
+    let dw=cw,dh=ch;
+    if(fit!=="fill"){
+      const rc=Math.min(cw/nw,ch/nh),rv=Math.max(cw/nw,ch/nh);
+      const k=fit==="cover"?rv:fit==="contain"?rc:fit==="none"?1:Math.min(1,rc);
+      dw=nw*k;dh=nh*k}
+    const pp=(cs.objectPosition||"50% 50%").split(/\s+/),
+          dx=posPart(pp[0]||"50%",cw-dw),dy=posPart(pp[1]||pp[0]||"50%",ch-dh);
+    const S=2,c=document.createElement("canvas");c.width=Math.max(1,Math.round(cw*S));c.height=Math.max(1,Math.round(ch*S));
+    const x=c.getContext("2d");x.imageSmoothingQuality="high";x.scale(S,S);x.drawImage(i,dx,dy,dw,dh);
+    img.src=c.toDataURL("image/png");img.style.objectFit="fill";img.style.objectPosition="0% 0%";
+  }catch(e){}
+}
 const ready=img=>img.complete&&img.naturalWidth?Promise.resolve():new Promise(r=>{img.onload=img.onerror=r;setTimeout(r,8000)});
 function cut(src,tol){return new Promise((ok,no)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>{try{
   const c=document.createElement("canvas");c.width=i.naturalWidth;c.height=i.naturalHeight;const x=c.getContext("2d");x.drawImage(i,0,0);
@@ -338,7 +369,7 @@ const applySchool=sc=>SCH.forEach(([id,k])=>{if(sc&&sc[k]!==undefined)$(id).valu
 const cur=()=>templates.find(t=>t.id===activeId);
 function persist(){cur().html=tpl;try{localStorage.setItem(KEY,JSON.stringify({templates,activeId,mapping,logo,sig,school:schoolData(),students:rawStudents,seen:FACTORY.map(f=>f.id)}))}catch(e){}}
 let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
-templates=(saved&&Array.isArray(saved.templates)&&saved.templates.length?saved.templates:FACTORY).map(t=>({...t}));
+templates=(saved&&Array.isArray(saved.templates)&&saved.templates.length?saved.templates:FACTORY).map(t=>({...t,html:clean(t.html)}));
 activeId=saved&&templates.some(t=>t.id===saved.activeId)?saved.activeId:templates[0].id;tpl=cur().html;
 if(saved){mapping=saved.mapping||{};if(saved.logo)logo=saved.logo;if(saved.sig)sig=saved.sig;applySchool(saved.school)}
 const seen=(saved&&saved.seen)||["t0","t1","t2","t3","t4","t5"];
@@ -487,7 +518,7 @@ $("tExp1").onclick=()=>expT([cur()],"modelo-"+slug(cur().name)+".json");
 $("tImp").onchange=async e=>{const f=e.target.files[0];if(!f)return;
   try{const p=JSON.parse(await f.text()),arr=(Array.isArray(p)?p:p.templates||(p.html?[p]:[])).filter(t=>t&&typeof t.html==="string");
     if(!arr.length)throw new Error("nenhum modelo válido encontrado.");
-    persist();arr.forEach(t=>templates.push({id:uid(),name:t.name||"Importado",html:t.html}));activeId=templates[templates.length-1].id;tpl=cur().html;persist();render();openEd();
+    persist();arr.forEach(t=>templates.push({id:uid(),name:t.name||"Importado",html:clean(t.html)}));activeId=templates[templates.length-1].id;tpl=cur().html;persist();render();openEd();
     $("tmsg").className="msg";$("tmsg").textContent=`${arr.length} modelo(s) importado(s).`}
   catch(err){$("tmsg").className="msg err";$("tmsg").textContent="Ficheiro de modelos inválido."}e.target.value=""};
 
@@ -521,7 +552,7 @@ function buildProps(){
 function syncProps(){const t=est.children[sel];if(!t)return;const cs=getComputedStyle(t);
   $("props").querySelectorAll("[data-p]").forEach(i=>{if(i===document.activeElement)return;const v=cs[RD[i.dataset.p]||i.dataset.p];
     i.value=i.dataset.u==="px"?(Math.round(parseFloat(v))||0):i.dataset.u==="c"?rgb2hex(v):v==="start"?"left":v})}
-function commit(skipCode){hist.push(tpl);if(hist.length>60)hist.shift();tpl=tdom.innerHTML;persist();if(!skipCode)$("code").value=tpl;draw();clearTimeout(rt);rt=setTimeout(render,250)}
+function commit(skipCode){hist.push(tpl);if(hist.length>60)hist.shift();tpl=clean(tdom.innerHTML);persist();if(!skipCode)$("code").value=tpl;draw();clearTimeout(rt);rt=setTimeout(render,250)}
 function undo(){if(!hist.length)return;tpl=tdom.innerHTML=hist.pop();persist();$("code").value=tpl;if(sel>=tdom.children.length)sel=-1;propsFor=-1;draw()}
 function addEl(h){tdom.insertAdjacentHTML("beforeend",h);sel=tdom.children.length-1;commit()}
 function mirror(list){list.forEach(i=>{const t=est.children[i],m=tdom.children[i];if(!t||!m||t.tagName==="STYLE")return;
@@ -559,7 +590,7 @@ $("eFront").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.appendChil
 $("eBack").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.prepend(m);sel=0;commit()};
 $("eProps").onclick=()=>{$("ep").classList.add("open");bd.hidden=false};
 function openEd(){
-  tdom=document.createElement("div");tdom.innerHTML=tpl;hist=[];sel=-1;propsFor=-1;
+  tdom=INERT.createElement("div");tdom.innerHTML=clean(tpl);hist=[];sel=-1;propsFor=-1;
   const keys=[...new Set([...FIELDS,...Object.keys(students[0]||{}).filter(k=>!k.startsWith("__"))])];
   $("eField").innerHTML='<option value="">+ Campo…</option>'+keys.map(k=>`<option value="${esc(k)}">{{${esc(k)}}}</option>`).join("");
   $("code").value=tpl;$("eName").value=cur().name;buildChips();efit();draw()}
@@ -585,7 +616,7 @@ function buildChips(){const keys=[...new Set([...FIELDS.filter(k=>k!=="initials"
 const ew=$("ewrap");ew.addEventListener("dragover",e=>e.preventDefault());
 ew.addEventListener("drop",e=>{e.preventDefault();const k=e.dataTransfer.getData("text/plain");if(!k)return;const r=ew.getBoundingClientRect();addField(k,Math.round((e.clientX-r.left)/scale),Math.round((e.clientY-r.top)/scale))});
 
-/* ===== PDF (imagens corrigidas) ===== */
+/* ===== PDF ===== */
 let curBtn=null;
 function prog(i,n,txt){if(curBtn!==$("expAll"))return;curBtn.style.setProperty("--pg",(n?i/n*100:0)+"%");$("expAllT").textContent=txt}
 let skipped=0;
@@ -602,7 +633,10 @@ async function makePDF(list,name){
       const u=phOf(s);if(u&&!u.startsWith("data:")&&!imgCache[u])await toData(u);
       let c=null;
       for(let t=0;t<2&&!c;t++){try{holder.innerHTML=stageHTML(s);const el=holder.firstElementChild,imgs=[...el.querySelectorAll("img")];
-        await Promise.all(imgs.map(rast));await Promise.all(imgs.map(ready));await document.fonts.ready;fitNames(el);
+        await document.fonts.ready;
+        /* ajusta cada imagem ao seu object-fit (cover/contain/fill/none/scale-down) antes de fotografar */
+        for(const im of imgs)await bake(im);
+        await Promise.all(imgs.map(ready));fitNames(el);
         c=await html2canvas(el,{scale:1.5,useCORS:true,backgroundColor:"#ffffff",logging:false,scrollX:0,scrollY:0,imageTimeout:20000})}catch(e){await sleep(300)}}
       if(c){if(!first)pdf.addPage([85.6,54],"landscape");first=false;pdf.addImage(c.toDataURL("image/jpeg",.9),"JPEG",0,0,85.6,54)}else skipped++;
       c=null;n++;bar.firstElementChild.style.width=(n/N*100)+"%";pm.textContent=`A criar ${n} de ${N}…`;prog(n,N,`${n} de ${N} cartões (${Math.round(n/N*100)}%)`);
@@ -637,7 +671,7 @@ $("pImp").onchange=async e=>{const f=e.target.files[0];if(!f)return;const j=$("j
   try{const p=JSON.parse(await f.text());
     if(!["eduall-cards","cartoes-estudante"].includes(p.app))throw new Error("este ficheiro não é um projeto desta app.");
     applySchool(p.school);logo=p.logo||DEFAULT_LOGO;sig=p.signature||null;mapping=p.mapping||{};photos=p.photos||{};
-    if(Array.isArray(p.templates)&&p.templates.length){templates=p.templates;activeId=templates.some(t=>t.id===p.activeTemplate)?p.activeTemplate:templates[0].id;tpl=cur().html}
+    if(Array.isArray(p.templates)&&p.templates.length){templates=p.templates.map(t=>({...t,html:clean(t.html)}));activeId=templates.some(t=>t.id===p.activeTemplate)?p.activeTemplate:templates[0].id;tpl=cur().html}
     rawStudents=Array.isArray(p.students)?p.students:[];students=rawStudents.map(norm);picked.clear();
     $("json").value="";buildMap();fillValues();persist();render();
     j.className="msg";j.textContent=`Projeto importado: ${students.length} alunos e ${templates.length} modelos.`}

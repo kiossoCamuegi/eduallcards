@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#430DDB">
+<meta name="theme-color" content="#2C2C2C">
 <title>eduall cards</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -94,6 +94,101 @@ main{display:block;padding:14px}
 #ep{position:fixed;top:0;right:0;bottom:0;width:min(94vw,380px);z-index:90;transform:translateX(105%);transition:transform .25s;max-height:none;border-radius:0;padding-top:0}
 #ep.open{transform:none}#ep .oh{display:flex;margin:0 -14px 8px;position:sticky;top:0;background:#fff}
 .tb select{max-width:100%}}
+</style>
+<style id="figma-theme">
+/* ===== TEMA FIGMA ===== */
+:root{--p:#0D99FF;--pl:#E5F4FF;--ink:#1E1E1E;--mut:#8C8C8C;--line:#E6E6E6;--bg:#F5F5F5;--red:#F24822;--bar:#2C2C2C}
+body{font:12px/16px Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#fff;color:var(--ink)}
+.hd{height:48px;padding:0 12px;gap:8px;background:var(--bar);border-bottom:0;box-shadow:none;color:#fff;flex:none}
+.hd img{order:0;height:28px;background:#fff;border-radius:4px;padding:2px 6px}
+.hd::before{content:"Cartões de estudante";order:1;margin-left:4px;padding-left:12px;border-left:1px solid #444;font-size:12px;font-weight:600;color:#fff}
+nav{order:2;margin-left:auto;gap:2px}
+nav button{width:32px;height:32px;padding:0;border:0;border-radius:6px;background:transparent;color:#fff;font-size:16px}
+nav button:hover:not(:disabled){background:#444;box-shadow:none}
+nav button.on,nav button.on:hover{background:var(--p);color:#fff}
+button,.btn{height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--ink);font:500 11px Inter,system-ui,sans-serif;gap:6px}
+button i,.btn i{font-size:13px}
+button:hover:not(:disabled),.btn:hover{background:var(--bg);box-shadow:none}
+button.alt,.btn.alt{border-color:var(--line)}
+button.alt:hover:not(:disabled),.btn.alt:hover{border-color:#D0D0D0;background:var(--bg)}
+button.pri{background:var(--p);border-color:var(--p);color:#fff}
+button.pri:hover:not(:disabled){background:#0A84DB;box-shadow:none}
+button.danger{background:var(--red);border-color:var(--red);color:#fff}
+button.danger:hover:not(:disabled){background:#D93E1C;box-shadow:none}
+button.danger.busy{background:linear-gradient(90deg,#B73516 var(--pg),var(--red) var(--pg));min-width:200px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid rgba(13,153,255,.55);outline-offset:-1px}
+label{font-size:11px;font-weight:400;color:var(--mut);margin:8px 0 3px}
+input[type=text],input[type=number],select,textarea{height:28px;padding:0 8px;border:1px solid transparent;border-radius:5px;background:var(--bg);font:400 12px Inter,system-ui,sans-serif;color:var(--ink)}
+input[type=text]:hover,input[type=number]:hover,select:hover,textarea:hover{border-color:var(--line)}
+input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{border-color:var(--p);background:#fff}
+textarea{height:110px;padding:8px;font:400 11px ui-monospace,SFMono-Regular,Menlo,monospace}
+.msg{font-size:11px;color:var(--mut)}.msg.err{color:var(--red)}
+details>summary{color:var(--ink);font-weight:500;font-size:11px}
+#fmt{background:var(--bg);border-radius:6px;font-size:10px}
+aside{background:#fff;border-right:1px solid var(--line);padding:0}
+.box{background:#fff;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;margin:0;padding:6px 12px 12px}
+.box h2{margin:0 0 6px;padding:6px 0;align-items:center;font-size:11px;font-weight:600;color:var(--ink)}
+.box h2::after{font-family:bootstrap-icons;content:"\F229";font-size:10px;font-weight:400;color:var(--mut)}
+.box.closed{padding-bottom:2px}
+.box.closed h2::after{content:"\F285"}
+.row{gap:6px;margin-top:8px}
+.pv{background-color:var(--bg);background-image:radial-gradient(#D9D9D9 1px,transparent 1px);background-size:16px 16px}
+.tb{margin:0;padding:8px 12px;gap:6px;background:#fff;border-bottom:1px solid var(--line)}
+.tb input[type=text]{min-width:150px}
+#count{color:var(--mut);font-weight:500}
+.grid{gap:24px;padding:24px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.wrap{border:0;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.06);transition:box-shadow .12s}
+.wrap:hover{box-shadow:0 0 0 2px var(--p)}
+.cd:has(.ck input:checked) .wrap{box-shadow:0 0 0 2px var(--p)}
+.cn{padding:6px 0 0;font-size:11px;font-weight:500;color:var(--ink)}.cd small{font-weight:400}
+.ck{left:8px;top:8px;border-radius:4px;padding:2px 4px;box-shadow:0 0 0 1px var(--line)}
+.ck input{width:14px;height:14px}
+.empty{margin:24px;padding:40px 16px;border:1px dashed #CFCFCF;border-radius:8px;background:transparent;font-size:12px}
+.gal{grid-template-columns:1fr 1fr;gap:8px}
+.tt{border:1px solid var(--line);border-radius:6px;padding:4px;font-size:10px;font-weight:500;color:var(--ink)}
+.tt:hover{border-color:#CFCFCF}
+.tt.on{border-color:var(--p);background:var(--pl);box-shadow:0 0 0 1px var(--p)}
+.tw{border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.eb{margin:0;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line)}
+.eb button,.eb .btn{padding:0 8px;font-size:11px}
+#ec{background-color:var(--bg);background-image:radial-gradient(#D9D9D9 1px,transparent 1px);background-size:16px 16px;border-radius:0}
+#ewrap{box-shadow:0 0 0 1px rgba(0,0,0,.1),0 4px 16px rgba(0,0,0,.12)}
+#selbox{border:1px solid var(--p)}
+#hdl{width:8px;height:8px;right:-5px;bottom:-5px;background:#fff;border:1px solid var(--p);border-radius:1px}
+#ep{background:#fff;border:1px solid var(--line);border-radius:0;padding:0 12px 12px}
+#ep h3{margin:14px 0 6px;font-size:11px;font-weight:600}
+.pr{grid-template-columns:1fr 96px;font-size:11px;font-weight:400}
+.pr input,.pr select{height:24px;padding:0 6px}.pr input[type=color]{padding:2px;height:24px}
+.chip{padding:3px 8px;border:1px solid var(--line);border-radius:4px;color:var(--ink);font-size:11px;font-weight:500}
+.chip:hover{border-color:var(--p);color:var(--p)}
+#code{height:180px}
+.bar{height:4px;border-radius:2px}.bar i{background:var(--p)}
+.oc{width:min(96vw,300px);border-radius:0;box-shadow:-4px 0 24px rgba(0,0,0,.18)}
+.oh{padding:12px;font-size:12px;font-weight:600}
+.ob{padding:4px 12px 12px}.of{padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px))}
+#bd{background:rgba(0,0,0,.3)}
+*{scrollbar-width:thin;scrollbar-color:#CFCFCF transparent}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#D0D0D0;border-radius:4px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#B3B3B3;background-clip:content-box;border:2px solid transparent}
+@media(min-width:901px){
+ main{padding:0;max-width:none}
+ #t_edit:not([hidden]){grid-template-columns:280px minmax(0,1fr);gap:0}
+ #t_tpl:not([hidden]){display:grid;grid-template-columns:280px minmax(0,1fr);grid-template-rows:minmax(0,1fr);overflow:hidden}
+ #t_tpl>.box:first-child{overflow:auto;min-height:0;border-right:1px solid var(--line);border-bottom:0}
+ #t_tpl>.box:last-child{display:flex;flex-direction:column;min-height:0;padding:0;border-bottom:0;background:var(--bg)}
+ #t_tpl>.box:last-child>h2{display:none}
+ .em{flex:1;min-height:0;gap:0;grid-template-columns:minmax(0,1fr) 264px}
+ #ec{height:auto;min-height:0}
+ #ep{max-height:none;border-width:0 0 0 1px}
+}
+@media(max-width:900px){
+ .hd::before{display:none}
+ .tb{padding:8px}.grid{padding:12px;gap:16px}
+ .em{gap:0}#ec{height:52dvh;border-radius:0}
+ #ep{width:min(94vw,300px);border-radius:0}
+}
+@media(pointer:coarse){#hdl{width:18px;height:18px;right:-9px;bottom:-9px}}
 </style>
 </head>
 <body>
@@ -204,9 +299,7 @@ const picked=new Set(),imgCache={};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fold=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 const slug=s=>fold(s).replace(/[^\w]+/g,"-");
-/* remove "visibility:hidden" que versões anteriores gravavam por engano nos modelos (era isso que fazia a imagem desaparecer) */
 const clean=h=>String(h||"").replace(/visibility:\s*hidden;?\s*/gi,"");
-/* documento inerte: as imagens do modelo ({{photo}} etc.) nunca são carregadas aqui, por isso o onerror nunca dispara no editor */
 const INERT=document.implementation.createHTMLDocument("");
 
 /* ===== imagens: copia segura para o PDF ===== */
@@ -228,11 +321,7 @@ async function toData(u){
   return false;
 }
 
-/* ===== object-fit no PDF =====
-   O html2canvas não respeita object-fit / object-position. Antes de fotografar o cartão,
-   cada <img> é desenhada num canvas com o modo certo (fill, cover, contain, none, scale-down)
-   e a imagem é substituída por esse resultado já recortado/ajustado, com object-fit:fill.
-   Com force=true (foto do aluno), o modo é sempre "cover": a foto preenche a moldura toda, sem deformar. */
+/* ===== object-fit no PDF ===== */
 function loadImg(src){return new Promise(ok=>{const i=new Image();if(!src.startsWith("data:"))i.crossOrigin="anonymous";const t=setTimeout(()=>ok(null),8000);i.onload=()=>{clearTimeout(t);ok(i)};i.onerror=()=>{clearTimeout(t);ok(null)};i.src=src})}
 const posPart=(v,free)=>/%$/.test(v)?free*parseFloat(v)/100:(parseFloat(v)||0);
 async function bake(img,force){
@@ -358,8 +447,7 @@ const T_NV=((t,g,m,k)=>[
  tx(650,240,"1. Este cartão deve ser usado de forma visível durante as aulas.<br>2. Em caso de perda, contacte a secretaria.<br>3. A 2ª via é emitida mediante pagamento.",19,600,t,"white-space:normal;width:340px;line-height:1.5"),
  bx(0,592,1024,48,`background-color:${m}`),bx(40,588,300,52,"background-color:#fff"),tx(56,596,"Linha de apoio",13,500,"#333333"),tx(56,612,"{{phones}}",20,700,t,"width:270px;overflow:hidden")].join("\n"))("#0b7b80","#e8b05a","#7a0030","#0d2a3b");
 
-/* ----- 10 novos modelos (cores e designs diferentes) ----- */
-/* Coral Vibrante: onda coral no topo, foto arredondada a sobrepor a onda */
+/* ----- 10 novos modelos ----- */
 const T_CORAL=((p,a)=>[
  bx(0,0,1024,640,"background-color:#fff6f2"),
  sv(0,0,1024,270,"M0 0H1024V140Q720 270 0 170Z",a),sv(0,0,1024,240,"M0 0H1024V110Q720 240 0 140Z",p),
@@ -368,21 +456,18 @@ const T_CORAL=((p,a)=>[
  tx(60,238,"{{title}}",16,800,p,"letter-spacing:6px"),nm(60,268,640,40,"#222222"),tx(60,322,MAT,16,500,"#555555"),
  ...four(60,330,375,465,"#888888","#222222"),bc(730,440,240,40,"#222222"),sg(750,512,200,"#222222"),
  bx(0,598,1024,42,`background-color:${p}`),foot(40,611,"#ffffff")].join("\n"))("#ff5a4e","#ffb199");
-/* Turquesa Lateral: coluna esquerda com foto redonda, dados à direita */
 const T_TEAL=((p,a)=>[
  bx(0,0,300,640,`background-color:${p}`),bx(40,50,220,220,`background-color:${a};border-radius:50%`),pic(48,58,204,204,"border-radius:50%"),
  lg(50,300,200,100,WL),bx(50,430,200,70,"background-color:#fff;border-radius:10px"),bc(60,436,180,34,"#111111"),
  tx(340,44,"{{schoolName}}",28,800,p,"text-transform:uppercase;width:640px;overflow:hidden"),tx(340,84,"{{subtitle}}",15,600,"#777777"),
  bx(340,118,640,2,`background-color:${a}`),tx(340,132,"{{title}}",18,800,a,"letter-spacing:5px"),
  ROWS(340,185,52,"#777777","#111111",150,20,330,"#e5e5e5"),sg(780,490,200,"#111111"),foot(340,606,"#666666")].join("\n"))("#0e7c86","#f6a623");
-/* Real Dourado: papel creme, dupla moldura dourada, tudo centrado */
 const T_ROYAL=((p,a)=>[
  bx(0,0,1024,640,"background-color:#fbf5e6"),bx(16,16,992,608,`border:3px solid ${a};box-sizing:border-box`),bx(28,28,968,584,`border:1px solid ${a};box-sizing:border-box`),
  lg(437,40,150,100),tx(0,146,"{{schoolName}}",30,800,p,"width:1024px;text-align:center;text-transform:uppercase"),tx(0,184,"{{subtitle}}",15,600,"#777777","width:1024px;text-align:center"),
  bx(362,222,300,2,`background-color:${a}`),tx(0,234,"{{title}}",20,800,a,"width:1024px;text-align:center;letter-spacing:6px"),
  pic(70,290,200,250,`border:4px solid ${a};box-sizing:border-box;border-radius:6px`),ROWS(310,285,46,"#777777","#111111",150,20,230,"#e0d6bd"),
  bc(730,300,230,40,p),sg(760,430,190,"#111111"),tx(0,586,"{{address}}  ·  {{phones}}",11,500,"#777777","width:1024px;text-align:center")].join("\n"))("#14213d","#c9a227");
-/* Laranja Diagonal: painel laranja inclinado à direita com a foto */
 const T_DIAG=((o,k)=>[
  sv(520,0,200,640,"M150 0H200L50 640H0Z",k),sv(560,0,464,640,"M200 0H464V640H0Z",o),
  pic(740,150,230,290,"border-radius:16px;border:5px solid #fff;box-sizing:border-box"),
@@ -390,7 +475,6 @@ const T_DIAG=((o,k)=>[
  tx(40,160,"{{title}}",18,800,o,"letter-spacing:5px"),nm(40,190,560,38,k),tx(40,246,MAT,16,500,"#555555"),bx(40,282,90,5,`background-color:${o}`),
  ...four(40,290,310,400,"#888888",k),bc(740,470,230,40,"#ffffff"),sg(40,490,200,k),
  tx(40,590,"{{address}} · {{phones}}",10,500,"#666666","width:620px;white-space:normal;line-height:1.4")].join("\n"))("#f26b1d","#1d2b3a");
-/* Neon Noite: fundo escuro, moldura em degradê rosa-ciano */
 const T_NEON=((b,m,c)=>[
  bx(0,0,1024,640,`background-color:${b}`),bx(0,0,1024,6,`background:linear-gradient(90deg,${m},${c})`),bx(0,634,1024,6,`background:linear-gradient(90deg,${c},${m})`),
  lg(36,26,100,100,WL),tx(156,38,"{{schoolName}}",28,800,"#ffffff","text-transform:uppercase;width:540px;overflow:hidden"),tx(156,84,"{{subtitle}}",15,600,c),
@@ -399,7 +483,6 @@ const T_NEON=((b,m,c)=>[
  ROWS(340,160,52,c,"#ffffff",170,21,420,"#2c2552"),
  bx(40,490,258,88,"background-color:#fff;border-radius:10px"),bc(50,498,238,40,"#111111"),
  bx(750,490,224,110,"background-color:#fff;border-radius:10px"),sg(762,498,200,"#111111"),foot(40,608,"#9a94c8")].join("\n"))("#0f0a2a","#ff2d95","#22d3ee");
-/* Verde Natureza: círculos orgânicos, cartão branco arredondado */
 const T_NATURE=((g,l,a)=>[
  bx(0,0,1024,640,`background-color:${l}`),bx(-80,-80,260,260,`background-color:${g};border-radius:50%`),bx(860,-60,220,220,`background-color:${a};border-radius:50%`),bx(880,530,220,220,`background-color:${g};border-radius:50%`),
  lg(60,40,100,100,WL),tx(200,44,"{{schoolName}}",28,800,g,"width:600px;text-transform:uppercase;overflow:hidden"),tx(200,88,"{{subtitle}}",15,600,"#6b7a6b"),
@@ -407,7 +490,6 @@ const T_NATURE=((g,l,a)=>[
  pic(50,210,240,300,"border-radius:24px;border:6px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.2);box-sizing:border-box"),
  bx(330,200,560,330,"background-color:#fff;border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,.08)"),ROWS(360,215,50,"#6b7a6b","#1b2b1b",150,20,300,"#e4ece4"),
  bc(50,545,240,36,g),sg(700,545,160,"#1b2b1b")].join("\n"))("#2e7d32","#eef7ee","#9ccc65");
-/* Faixa Vermelha: banda larga no meio, foto a sobrepor */
 const T_BAND=((r,k)=>[
  bx(0,0,1024,640,"background-color:#ffffff"),lg(36,20,110,110,"object-position:left center"),
  tx(165,34,"{{schoolName}}",32,800,k,"text-transform:uppercase;width:820px;overflow:hidden"),tx(165,82,"{{subtitle}}",16,600,"#777777"),bx(165,116,120,5,`background-color:${r}`),
@@ -415,7 +497,6 @@ const T_BAND=((r,k)=>[
  tx(310,214,"{{title}}",14,800,"#ffd6d6","letter-spacing:6px"),nm(310,244,660,44,"#ffffff"),tx(310,306,MAT,17,500,"#ffe9e9"),
  ...four(310,610,400,490,"#888888",k),bc(60,440,210,36,k),sg(780,420,190,k),
  bx(0,596,1024,44,`background-color:${k}`),foot(40,611,"#ffffff")].join("\n"))("#d62828","#1b1b2f");
-/* Cinza Executivo: cabeçalho carvão, cartões brancos com sombra */
 const T_EXEC=((k,a)=>[
  bx(0,0,1024,640,"background-color:#f2f4f6"),bx(0,0,1024,120,`background-color:${k}`),bx(0,120,1024,6,`background-color:${a}`),
  lg(36,14,92,92,WL),tx(150,28,"{{schoolName}}",28,800,"#ffffff","text-transform:uppercase;width:540px;overflow:hidden"),tx(150,72,"{{subtitle}}",15,500,"#c8d0d8"),
@@ -423,7 +504,6 @@ const T_EXEC=((k,a)=>[
  bx(40,160,260,330,"background-color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.12);border-radius:6px"),pic(55,175,230,260,"border-radius:4px"),tx(55,448,"{{class}}",18,800,k,"width:230px;text-align:center"),
  bx(330,160,654,330,"background-color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.12);border-radius:6px"),bx(330,160,8,330,`background-color:${a}`),
  ROWS(370,176,50,"#7a8590",k,150,20,400,"#e6eaee"),bc(40,520,260,36,k),sg(780,505,190,k),foot(330,606,"#667788")].join("\n"))("#2b3a4a","#17b3a3");
-/* Rosa Pastel: bolhas suaves, foto redonda, cartão arredondado */
 const T_ROSA=((p,d)=>[
  bx(0,0,1024,640,"background-color:#fff0f6"),bx(-60,-60,240,240,`background-color:${p};border-radius:50%`),bx(780,-90,300,300,"background-color:#ffc2dc;border-radius:50%"),bx(860,480,260,260,`background-color:${p};border-radius:50%`),
  lg(40,40,100,100,WL+";border-radius:50%"),tx(170,48,"{{schoolName}}",28,800,d,"text-transform:uppercase;width:600px;overflow:hidden"),tx(170,92,"{{subtitle}}",15,600,"#a05a7a"),
@@ -431,7 +511,6 @@ const T_ROSA=((p,d)=>[
  tx(60,470,"{{title}}",15,800,d,"width:250px;text-align:center;letter-spacing:4px"),bc(60,505,250,36,d),
  bx(350,180,620,350,"background-color:#fff;border-radius:26px;box-shadow:0 3px 14px rgba(160,40,100,.15)"),ROWS(385,200,52,"#a05a7a","#3a1830",150,20,330,"#f6dbe8"),
  sg(780,545,180,d),foot(60,608,"#a05a7a")].join("\n"))("#ff7eb6","#8a1c5a");
-/* Azul Degradê: fundo em degradê com cartão branco central */
 const T_GRAD=((a,b)=>[
  bx(0,0,1024,640,`background:linear-gradient(135deg,${a},${b})`),
  lg(36,26,100,100,WL),tx(156,38,"{{schoolName}}",30,800,"#ffffff","text-transform:uppercase;width:820px;overflow:hidden"),tx(156,84,"{{subtitle}}",16,600,"#cfe0ff"),tx(156,112,"{{title}}",15,700,"#ffffff","letter-spacing:6px"),
@@ -724,7 +803,6 @@ async function makePDF(list,name){
       let c=null;
       for(let t=0;t<2&&!c;t++){try{holder.innerHTML=stageHTML(s);const el=holder.firstElementChild,imgs=[...el.querySelectorAll("img")];
         await document.fonts.ready;
-        /* ajusta cada imagem ao seu object-fit antes de fotografar; a foto do aluno usa sempre "cover" (preenche a moldura) */
         for(const im of imgs)await bake(im,cover&&im.getAttribute("src")===pSrc);
         await Promise.all(imgs.map(ready));fitNames(el);
         c=await html2canvas(el,{scale:1.5,useCORS:true,backgroundColor:"#ffffff",logging:false,scrollX:0,scrollY:0,imageTimeout:20000})}catch(e){await sleep(300)}}

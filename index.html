@@ -83,6 +83,7 @@ details>summary{color:var(--p)}
 #bd{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:85}
 #ep .oh{display:none}
 .wrap{box-shadow:0 1px 6px rgba(67,13,219,.12)}
+.ckl{display:flex;gap:6px;align-items:center;margin:10px 0 0;font-size:12px}.ckl input{width:auto;margin:0;accent-color:var(--p)}
 @media(max-width:900px){
 html,body{height:auto}body{display:block;overflow:auto}
 main{display:block;padding:14px}
@@ -135,6 +136,7 @@ main{display:block;padding:14px}
   <div class="box"><h2>4. Exportar PDF</h2>
    <div class="row" style="margin-top:0"><button id="exp" disabled>Visíveis</button><button class="alt" id="expSel" disabled>Selecionados</button></div>
    <div class="row" style="align-items:center"><select id="gby" style="width:auto"><option value="grade">Classe</option><option value="class">Turma</option><option value="course">Curso</option><option value="period">Período</option></select><button class="alt" id="expGroups" disabled>Um PDF por grupo</button></div>
+   <label class="ckl"><input type="checkbox" id="coverPh" checked> Foto preenchida no PDF (efeito cover)</label>
    <div class="bar" id="bar"><i></i></div><div class="msg" id="pmsg"></div>
   </div>
   <div class="box"><h2>5. Guardar projeto</h2>
@@ -229,10 +231,11 @@ async function toData(u){
 /* ===== object-fit no PDF =====
    O html2canvas não respeita object-fit / object-position. Antes de fotografar o cartão,
    cada <img> é desenhada num canvas com o modo certo (fill, cover, contain, none, scale-down)
-   e a imagem é substituída por esse resultado já recortado/ajustado, com object-fit:fill. */
+   e a imagem é substituída por esse resultado já recortado/ajustado, com object-fit:fill.
+   Com force=true (foto do aluno), o modo é sempre "cover": a foto preenche a moldura toda, sem deformar. */
 function loadImg(src){return new Promise(ok=>{const i=new Image();if(!src.startsWith("data:"))i.crossOrigin="anonymous";const t=setTimeout(()=>ok(null),8000);i.onload=()=>{clearTimeout(t);ok(i)};i.onerror=()=>{clearTimeout(t);ok(null)};i.src=src})}
 const posPart=(v,free)=>/%$/.test(v)?free*parseFloat(v)/100:(parseFloat(v)||0);
-async function bake(img){
+async function bake(img,force){
   try{
     const src=img.getAttribute("src")||"";if(!src)return;
     const cs=getComputedStyle(img);if(cs.visibility==="hidden"||cs.display==="none")return;
@@ -241,7 +244,7 @@ async function bake(img){
           ch=r.height-f("borderTopWidth")-f("borderBottomWidth")-f("paddingTop")-f("paddingBottom");
     if(cw<1||ch<1)return;
     const i=await loadImg(src);if(!i)return;
-    const nw=i.naturalWidth||cw,nh=i.naturalHeight||ch,fit=cs.objectFit||"fill";
+    const nw=i.naturalWidth||cw,nh=i.naturalHeight||ch,fit=force?"cover":(cs.objectFit||"fill");
     let dw=cw,dh=ch;
     if(fit!=="fill"){
       const rc=Math.min(cw/nw,ch/nh),rv=Math.max(cw/nw,ch/nh);
@@ -354,6 +357,88 @@ const T_NV=((t,g,m,k)=>[
  bx(610,110,4,400,`background-color:${g}`),tx(650,190,"Nota",32,800,k),
  tx(650,240,"1. Este cartão deve ser usado de forma visível durante as aulas.<br>2. Em caso de perda, contacte a secretaria.<br>3. A 2ª via é emitida mediante pagamento.",19,600,t,"white-space:normal;width:340px;line-height:1.5"),
  bx(0,592,1024,48,`background-color:${m}`),bx(40,588,300,52,"background-color:#fff"),tx(56,596,"Linha de apoio",13,500,"#333333"),tx(56,612,"{{phones}}",20,700,t,"width:270px;overflow:hidden")].join("\n"))("#0b7b80","#e8b05a","#7a0030","#0d2a3b");
+
+/* ----- 10 novos modelos (cores e designs diferentes) ----- */
+/* Coral Vibrante: onda coral no topo, foto arredondada a sobrepor a onda */
+const T_CORAL=((p,a)=>[
+ bx(0,0,1024,640,"background-color:#fff6f2"),
+ sv(0,0,1024,270,"M0 0H1024V140Q720 270 0 170Z",a),sv(0,0,1024,240,"M0 0H1024V110Q720 240 0 140Z",p),
+ lg(36,22,100,100,WL),tx(156,38,"{{schoolName}}",30,800,"#ffffff","text-transform:uppercase;width:600px;overflow:hidden"),tx(156,84,"{{subtitle}}",16,600,"#ffffff"),
+ pic(730,120,240,300,"border-radius:22px;border:6px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.25);box-sizing:border-box"),
+ tx(60,238,"{{title}}",16,800,p,"letter-spacing:6px"),nm(60,268,640,40,"#222222"),tx(60,322,MAT,16,500,"#555555"),
+ ...four(60,330,375,465,"#888888","#222222"),bc(730,440,240,40,"#222222"),sg(750,512,200,"#222222"),
+ bx(0,598,1024,42,`background-color:${p}`),foot(40,611,"#ffffff")].join("\n"))("#ff5a4e","#ffb199");
+/* Turquesa Lateral: coluna esquerda com foto redonda, dados à direita */
+const T_TEAL=((p,a)=>[
+ bx(0,0,300,640,`background-color:${p}`),bx(40,50,220,220,`background-color:${a};border-radius:50%`),pic(48,58,204,204,"border-radius:50%"),
+ lg(50,300,200,100,WL),bx(50,430,200,70,"background-color:#fff;border-radius:10px"),bc(60,436,180,34,"#111111"),
+ tx(340,44,"{{schoolName}}",28,800,p,"text-transform:uppercase;width:640px;overflow:hidden"),tx(340,84,"{{subtitle}}",15,600,"#777777"),
+ bx(340,118,640,2,`background-color:${a}`),tx(340,132,"{{title}}",18,800,a,"letter-spacing:5px"),
+ ROWS(340,185,52,"#777777","#111111",150,20,330,"#e5e5e5"),sg(780,490,200,"#111111"),foot(340,606,"#666666")].join("\n"))("#0e7c86","#f6a623");
+/* Real Dourado: papel creme, dupla moldura dourada, tudo centrado */
+const T_ROYAL=((p,a)=>[
+ bx(0,0,1024,640,"background-color:#fbf5e6"),bx(16,16,992,608,`border:3px solid ${a};box-sizing:border-box`),bx(28,28,968,584,`border:1px solid ${a};box-sizing:border-box`),
+ lg(437,40,150,100),tx(0,146,"{{schoolName}}",30,800,p,"width:1024px;text-align:center;text-transform:uppercase"),tx(0,184,"{{subtitle}}",15,600,"#777777","width:1024px;text-align:center"),
+ bx(362,222,300,2,`background-color:${a}`),tx(0,234,"{{title}}",20,800,a,"width:1024px;text-align:center;letter-spacing:6px"),
+ pic(70,290,200,250,`border:4px solid ${a};box-sizing:border-box;border-radius:6px`),ROWS(310,285,46,"#777777","#111111",150,20,230,"#e0d6bd"),
+ bc(730,300,230,40,p),sg(760,430,190,"#111111"),tx(0,586,"{{address}}  ·  {{phones}}",11,500,"#777777","width:1024px;text-align:center")].join("\n"))("#14213d","#c9a227");
+/* Laranja Diagonal: painel laranja inclinado à direita com a foto */
+const T_DIAG=((o,k)=>[
+ sv(520,0,200,640,"M150 0H200L50 640H0Z",k),sv(560,0,464,640,"M200 0H464V640H0Z",o),
+ pic(740,150,230,290,"border-radius:16px;border:5px solid #fff;box-sizing:border-box"),
+ lg(36,24,100,100),tx(156,36,"{{schoolName}}",28,800,k,"text-transform:uppercase;width:480px;overflow:hidden"),tx(156,82,"{{subtitle}}",15,600,"#666666"),
+ tx(40,160,"{{title}}",18,800,o,"letter-spacing:5px"),nm(40,190,560,38,k),tx(40,246,MAT,16,500,"#555555"),bx(40,282,90,5,`background-color:${o}`),
+ ...four(40,290,310,400,"#888888",k),bc(740,470,230,40,"#ffffff"),sg(40,490,200,k),
+ tx(40,590,"{{address}} · {{phones}}",10,500,"#666666","width:620px;white-space:normal;line-height:1.4")].join("\n"))("#f26b1d","#1d2b3a");
+/* Neon Noite: fundo escuro, moldura em degradê rosa-ciano */
+const T_NEON=((b,m,c)=>[
+ bx(0,0,1024,640,`background-color:${b}`),bx(0,0,1024,6,`background:linear-gradient(90deg,${m},${c})`),bx(0,634,1024,6,`background:linear-gradient(90deg,${c},${m})`),
+ lg(36,26,100,100,WL),tx(156,38,"{{schoolName}}",28,800,"#ffffff","text-transform:uppercase;width:540px;overflow:hidden"),tx(156,84,"{{subtitle}}",15,600,c),
+ tx(700,44,"{{title}}",16,800,m,"width:290px;text-align:right;letter-spacing:5px"),
+ bx(40,150,258,328,`background:linear-gradient(135deg,${m},${c});border-radius:20px`),pic(46,156,246,316,"border-radius:16px"),
+ ROWS(340,160,52,c,"#ffffff",170,21,420,"#2c2552"),
+ bx(40,490,258,88,"background-color:#fff;border-radius:10px"),bc(50,498,238,40,"#111111"),
+ bx(750,490,224,110,"background-color:#fff;border-radius:10px"),sg(762,498,200,"#111111"),foot(40,608,"#9a94c8")].join("\n"))("#0f0a2a","#ff2d95","#22d3ee");
+/* Verde Natureza: círculos orgânicos, cartão branco arredondado */
+const T_NATURE=((g,l,a)=>[
+ bx(0,0,1024,640,`background-color:${l}`),bx(-80,-80,260,260,`background-color:${g};border-radius:50%`),bx(860,-60,220,220,`background-color:${a};border-radius:50%`),bx(880,530,220,220,`background-color:${g};border-radius:50%`),
+ lg(60,40,100,100,WL),tx(200,44,"{{schoolName}}",28,800,g,"width:600px;text-transform:uppercase;overflow:hidden"),tx(200,88,"{{subtitle}}",15,600,"#6b7a6b"),
+ bx(200,128,230,44,`background-color:${g};border-radius:22px`),tx(200,138,"{{title}}",18,800,"#ffffff","width:230px;text-align:center;letter-spacing:2px"),
+ pic(50,210,240,300,"border-radius:24px;border:6px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.2);box-sizing:border-box"),
+ bx(330,200,560,330,"background-color:#fff;border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,.08)"),ROWS(360,215,50,"#6b7a6b","#1b2b1b",150,20,300,"#e4ece4"),
+ bc(50,545,240,36,g),sg(700,545,160,"#1b2b1b")].join("\n"))("#2e7d32","#eef7ee","#9ccc65");
+/* Faixa Vermelha: banda larga no meio, foto a sobrepor */
+const T_BAND=((r,k)=>[
+ bx(0,0,1024,640,"background-color:#ffffff"),lg(36,20,110,110,"object-position:left center"),
+ tx(165,34,"{{schoolName}}",32,800,k,"text-transform:uppercase;width:820px;overflow:hidden"),tx(165,82,"{{subtitle}}",16,600,"#777777"),bx(165,116,120,5,`background-color:${r}`),
+ bx(0,200,1024,170,`background-color:${r}`),pic(60,150,210,260,"border:6px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,.3);box-sizing:border-box"),
+ tx(310,214,"{{title}}",14,800,"#ffd6d6","letter-spacing:6px"),nm(310,244,660,44,"#ffffff"),tx(310,306,MAT,17,500,"#ffe9e9"),
+ ...four(310,610,400,490,"#888888",k),bc(60,440,210,36,k),sg(780,420,190,k),
+ bx(0,596,1024,44,`background-color:${k}`),foot(40,611,"#ffffff")].join("\n"))("#d62828","#1b1b2f");
+/* Cinza Executivo: cabeçalho carvão, cartões brancos com sombra */
+const T_EXEC=((k,a)=>[
+ bx(0,0,1024,640,"background-color:#f2f4f6"),bx(0,0,1024,120,`background-color:${k}`),bx(0,120,1024,6,`background-color:${a}`),
+ lg(36,14,92,92,WL),tx(150,28,"{{schoolName}}",28,800,"#ffffff","text-transform:uppercase;width:540px;overflow:hidden"),tx(150,72,"{{subtitle}}",15,500,"#c8d0d8"),
+ tx(700,50,"{{title}}",15,700,a,"width:290px;text-align:right;letter-spacing:4px"),
+ bx(40,160,260,330,"background-color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.12);border-radius:6px"),pic(55,175,230,260,"border-radius:4px"),tx(55,448,"{{class}}",18,800,k,"width:230px;text-align:center"),
+ bx(330,160,654,330,"background-color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.12);border-radius:6px"),bx(330,160,8,330,`background-color:${a}`),
+ ROWS(370,176,50,"#7a8590",k,150,20,400,"#e6eaee"),bc(40,520,260,36,k),sg(780,505,190,k),foot(330,606,"#667788")].join("\n"))("#2b3a4a","#17b3a3");
+/* Rosa Pastel: bolhas suaves, foto redonda, cartão arredondado */
+const T_ROSA=((p,d)=>[
+ bx(0,0,1024,640,"background-color:#fff0f6"),bx(-60,-60,240,240,`background-color:${p};border-radius:50%`),bx(780,-90,300,300,"background-color:#ffc2dc;border-radius:50%"),bx(860,480,260,260,`background-color:${p};border-radius:50%`),
+ lg(40,40,100,100,WL+";border-radius:50%"),tx(170,48,"{{schoolName}}",28,800,d,"text-transform:uppercase;width:600px;overflow:hidden"),tx(170,92,"{{subtitle}}",15,600,"#a05a7a"),
+ pic(60,190,250,250,"border-radius:50%;border:8px solid #fff;box-shadow:0 4px 14px rgba(160,40,100,.25);box-sizing:border-box"),
+ tx(60,470,"{{title}}",15,800,d,"width:250px;text-align:center;letter-spacing:4px"),bc(60,505,250,36,d),
+ bx(350,180,620,350,"background-color:#fff;border-radius:26px;box-shadow:0 3px 14px rgba(160,40,100,.15)"),ROWS(385,200,52,"#a05a7a","#3a1830",150,20,330,"#f6dbe8"),
+ sg(780,545,180,d),foot(60,608,"#a05a7a")].join("\n"))("#ff7eb6","#8a1c5a");
+/* Azul Degradê: fundo em degradê com cartão branco central */
+const T_GRAD=((a,b)=>[
+ bx(0,0,1024,640,`background:linear-gradient(135deg,${a},${b})`),
+ lg(36,26,100,100,WL),tx(156,38,"{{schoolName}}",30,800,"#ffffff","text-transform:uppercase;width:820px;overflow:hidden"),tx(156,84,"{{subtitle}}",16,600,"#cfe0ff"),tx(156,112,"{{title}}",15,700,"#ffffff","letter-spacing:6px"),
+ bx(36,160,952,420,"background-color:#fff;border-radius:22px;box-shadow:0 6px 20px rgba(0,0,0,.3)"),
+ pic(66,185,230,290,`border-radius:16px;border:4px solid ${a};box-sizing:border-box`),nm(330,190,630,38,a),tx(330,244,MAT,16,500,"#555555"),bx(330,278,90,5,`background-color:${b}`),
+ ...four(330,630,305,395,"#777777","#111111"),bc(66,495,230,38,a),sg(780,468,180,"#111111"),tx(330,556,"{{address}}  ·  {{phones}}",11,500,"#777777")].join("\n"))("#1e3c72","#2a7de1");
+
 const C39=Object.fromEntries("0:nnnwwnwnn 1:wnnwnnnnw 2:nnwwnnnnw 3:wnwwnnnnn 4:nnnwwnnnw 5:wnnwwnnnn 6:nnwwwnnnn 7:nnnwnnwnw 8:wnnwnnwnn 9:nnwwnnwnn A:wnnnnwnnw B:nnwnnwnnw C:wnwnnwnnn D:nnnnwwnnw E:wnnnwwnnn F:nnwnwwnnn G:nnnnnwwnw H:wnnnnwwnn I:nnwnnwwnn J:nnnnwwwnn K:wnnnnnnww L:nnwnnnnww M:wnwnnnnwn N:nnnnwnnww O:wnnnwnnwn P:nnwnwnnwn Q:nnnnnnwww R:wnnnnnwwn S:nnwnnnwwn T:nnnnwnwwn U:wwnnnnnnw V:nwwnnnnnw W:wwwnnnnnn X:nwnnwnnnw Y:wwnnwnnnn Z:nwwnwnnnn -:nwnnnnwnw .:wwnnnnwnn *:nwnnwnwnn".split(" ").map(e=>[e[0],e.slice(2)]));
 function code39(t){let x=0,r="";for(const ch of "*"+String(t||"0").toUpperCase().replace(/[^0-9A-Z.\-]/g,"-")+"*"){const p=C39[ch];for(let i=0;i<9;i++){const w=p[i]==="w"?3:1;if(i%2===0)r+=`<rect x="${x}" y="0" width="${w}" height="40" fill="#000"/>`;x+=w}x+=1}
   return "data:image/svg+xml,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${x}" height="40" viewBox="0 0 ${x} 40" preserveAspectRatio="none">${r}</svg>`)}
@@ -362,7 +447,10 @@ const FACTORY=[{id:"t0",name:"Monte Sol (original)",html:DEFAULT_TPL},
   {id:"t1",name:"Azul Oceano",html:L_TOP("#0b4f9c","#f2b705")},{id:"t2",name:"Verde Escola",html:L_TOP("#176b45","#f4c430")},
   {id:"t3",name:"Roxo Moderno",html:L_SIDE("#5b2a86","#ff7a59")},{id:"t4",name:"Bordô Clássico",html:L_SIDE("#7a1f2b","#d9a441")},{id:"t5",name:"Noite Dourada",html:L_DARK("#14161c","#e0b252")},
   {id:"t6",name:"Bright Future (marinho e amarelo)",html:T_BF},{id:"t7",name:"Gurukul (azul e laranja)",html:T_GK},{id:"t8",name:"AMG (vermelho e verde)",html:T_AMG},
-  {id:"t9",name:"Aryan (vermelho)",html:T_ARY},{id:"t10",name:"NCVT frente (verde-azulado)",html:T_NF},{id:"t11",name:"NCVT verso (morada e notas)",html:T_NV}];
+  {id:"t9",name:"Aryan (vermelho)",html:T_ARY},{id:"t10",name:"NCVT frente (verde-azulado)",html:T_NF},{id:"t11",name:"NCVT verso (morada e notas)",html:T_NV},
+  {id:"t12",name:"Coral Vibrante (onda)",html:T_CORAL},{id:"t13",name:"Turquesa Lateral (foto redonda)",html:T_TEAL},{id:"t14",name:"Real Dourado (centrado)",html:T_ROYAL},
+  {id:"t15",name:"Laranja Diagonal",html:T_DIAG},{id:"t16",name:"Neon Noite (escuro)",html:T_NEON},{id:"t17",name:"Verde Natureza (círculos)",html:T_NATURE},
+  {id:"t18",name:"Faixa Vermelha",html:T_BAND},{id:"t19",name:"Cinza Executivo",html:T_EXEC},{id:"t20",name:"Rosa Pastel",html:T_ROSA},{id:"t21",name:"Azul Degradê",html:T_GRAD}];
 const SCH=[["sName","name"],["sSub","subtitle"],["sAddr","address"],["sTel","phones"],["sRoom","room"],["sTitle","title"],["sDir","dirLabel"]];
 const schoolData=()=>Object.fromEntries(SCH.map(([id,k])=>[k,$(id).value]));
 const applySchool=sc=>SCH.forEach(([id,k])=>{if(sc&&sc[k]!==undefined)$(id).value=sc[k]});
@@ -623,6 +711,7 @@ let skipped=0;
 async function makePDF(list,name){
   const {jsPDF}=window.jspdf,holder=$("off"),bar=$("bar"),pm=$("pmsg"),N=list.length,CH=120;
   const phOf=s=>photos[s.enrollmentNumber]||s.__photo||s.photoUrl;
+  const cover=$("coverPh").checked;
   bar.style.display="block";pm.textContent="A preparar as imagens…";prog(0,N,"A preparar imagens…");
   const urls=[...new Set([logo,...list.flatMap(s=>[phOf(s),s.__o&&s.__o.logo])].filter(Boolean))];let d=0;skipped=0;
   await pool(urls,4,async u=>{await toData(u);d++;pm.textContent=`A preparar imagens… ${d} de ${urls.length}`;prog(0,N,`Imagens ${d}/${urls.length}`)});
@@ -631,11 +720,12 @@ async function makePDF(list,name){
     const pdf=new jsPDF({orientation:"landscape",unit:"mm",format:[85.6,54]});let first=true;
     for(const s of list.slice(p*CH,(p+1)*CH)){
       const u=phOf(s);if(u&&!u.startsWith("data:")&&!imgCache[u])await toData(u);
+      const pSrc=u?(imgCache[u]||u):BLANK;
       let c=null;
       for(let t=0;t<2&&!c;t++){try{holder.innerHTML=stageHTML(s);const el=holder.firstElementChild,imgs=[...el.querySelectorAll("img")];
         await document.fonts.ready;
-        /* ajusta cada imagem ao seu object-fit (cover/contain/fill/none/scale-down) antes de fotografar */
-        for(const im of imgs)await bake(im);
+        /* ajusta cada imagem ao seu object-fit antes de fotografar; a foto do aluno usa sempre "cover" (preenche a moldura) */
+        for(const im of imgs)await bake(im,cover&&im.getAttribute("src")===pSrc);
         await Promise.all(imgs.map(ready));fitNames(el);
         c=await html2canvas(el,{scale:1.5,useCORS:true,backgroundColor:"#ffffff",logging:false,scrollX:0,scrollY:0,imageTimeout:20000})}catch(e){await sleep(300)}}
       if(c){if(!first)pdf.addPage([85.6,54],"landscape");first=false;pdf.addImage(c.toDataURL("image/jpeg",.9),"JPEG",0,0,85.6,54)}else skipped++;

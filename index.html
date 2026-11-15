@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2C2C2C">
+<meta name="theme-color" content="#ffffff">
 <title>eduall cards</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -99,12 +99,13 @@ main{display:block;padding:14px}
 /* ===== TEMA FIGMA ===== */
 :root{--p:#0D99FF;--pl:#E5F4FF;--ink:#1E1E1E;--mut:#8C8C8C;--line:#E6E6E6;--bg:#F5F5F5;--red:#F24822;--bar:#2C2C2C}
 body{font:12px/16px Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#fff;color:var(--ink)}
-.hd{height:48px;padding:0 12px;gap:8px;background:var(--bar);border-bottom:0;box-shadow:none;color:#fff;flex:none}
-.hd img{order:0;height:28px;background:#fff;border-radius:4px;padding:2px 6px}
-.hd::before{content:"Cartões de estudante";order:1;margin-left:4px;padding-left:12px;border-left:1px solid #444;font-size:12px;font-weight:600;color:#fff}
+/* Header / navbar: fundo branco */
+.hd{height:48px;padding:0 12px;gap:8px;background:#fff;border-bottom:1px solid var(--line);box-shadow:none;color:var(--ink);flex:none}
+.hd img{order:0;height:28px;background:transparent;border-radius:0;padding:0}
+.hd::before{content:"Cartões de estudante";order:1;margin-left:4px;padding-left:12px;border-left:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink)}
 nav{order:2;margin-left:auto;gap:2px}
-nav button{width:32px;height:32px;padding:0;border:0;border-radius:6px;background:transparent;color:#fff;font-size:16px}
-nav button:hover:not(:disabled){background:#444;box-shadow:none}
+nav button{width:32px;height:32px;padding:0;border:0;border-radius:6px;background:transparent;color:var(--ink);font-size:16px}
+nav button:hover:not(:disabled){background:var(--bg);box-shadow:none}
 nav button.on,nav button.on:hover{background:var(--p);color:#fff}
 button,.btn{height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--ink);font:500 11px Inter,system-ui,sans-serif;gap:6px}
 button i,.btn i{font-size:13px}
@@ -144,11 +145,13 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
 .ck{left:8px;top:8px;border-radius:4px;padding:2px 4px;box-shadow:0 0 0 1px var(--line)}
 .ck input{width:14px;height:14px}
 .empty{margin:24px;padding:40px 16px;border:1px dashed #CFCFCF;border-radius:8px;background:transparent;font-size:12px}
-.gal{grid-template-columns:1fr 1fr;gap:8px}
-.tt{border:1px solid var(--line);border-radius:6px;padding:4px;font-size:10px;font-weight:500;color:var(--ink)}
+/* Galeria de modelos: miniaturas compactas, em grelha com scroll próprio */
+.gal{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:46vh;overflow:auto;padding:2px 4px 2px 2px;align-content:start}
+.tt{border:1px solid var(--line);border-radius:6px;padding:3px;font-size:10px;line-height:1.2;font-weight:500;color:var(--ink);min-width:0}
+.tt .tn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 1px 0}
 .tt:hover{border-color:#CFCFCF}
 .tt.on{border-color:var(--p);background:var(--pl);box-shadow:0 0 0 1px var(--p)}
-.tw{border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.tw{border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.08);margin-bottom:2px}
 .eb{margin:0;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line)}
 .eb button,.eb .btn{padding:0 8px;font-size:11px}
 #ec{background-color:var(--bg);background-image:radial-gradient(#D9D9D9 1px,transparent 1px);background-size:16px 16px;border-radius:0}
@@ -162,6 +165,19 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
 .chip{padding:3px 8px;border:1px solid var(--line);border-radius:4px;color:var(--ink);font-size:11px;font-weight:500}
 .chip:hover{border-color:var(--p);color:var(--p)}
 #code{height:180px}
+.eb.nb{border-bottom:0;padding-bottom:0}
+.eb .sep{width:1px;height:18px;background:var(--line);margin:0 2px}
+.eb input[type=number]{width:54px}
+.eb input[type=color]{width:28px;height:28px;padding:2px;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer}
+.eb .cl{display:inline-flex;align-items:center;gap:3px;font-size:13px;color:var(--mut)}
+.eb button.ic{width:28px;padding:0}
+.eb button.tg.on{background:var(--pl);border-color:var(--p);color:var(--p)}
+.eb select{max-width:150px}
+.eb #eStat{margin:0 0 0 auto;min-height:0}
+#ec{justify-content:flex-start}#ewrap{margin:0 auto}
+.zm{display:inline-flex;align-items:center;gap:2px}.zm #eZoomLbl{min-width:46px;padding:0 6px}
+.ai{background:linear-gradient(135deg,#F3EEFF,#E5F4FF);border:1px solid #D9CCFF;border-radius:8px;padding:10px;margin:0 0 10px}
+.ai textarea{height:80px}
 .bar{height:4px;border-radius:2px}.bar i{background:var(--p)}
 .oc{width:min(96vw,300px);border-radius:0;box-shadow:-4px 0 24px rgba(0,0,0,.18)}
 .oh{padding:12px;font-size:12px;font-weight:600}
@@ -187,6 +203,7 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
  .tb{padding:8px}.grid{padding:12px;gap:16px}
  .em{gap:0}#ec{height:52dvh;border-radius:0}
  #ep{width:min(94vw,300px);border-radius:0}
+ .gal{grid-template-columns:repeat(3,minmax(0,1fr));max-height:38vh}
 }
 @media(pointer:coarse){#hdl{width:18px;height:18px;right:-9px;bottom:-9px}}
 </style>
@@ -253,18 +270,60 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
 </section>
 
 <section class="tab" id="t_tpl" hidden>
- <div class="box"><h2>Modelos de cartão</h2><div class="gal" id="gal"></div>
+ <div class="box"><h2>Modelos de cartão</h2>
+  <div class="ai"><button class="pri" id="aiCopy" style="width:100%">Pedir ao Claude ou ChatGPT</button>
+   <label for="aiStyle">Estilo pretendido (opcional)</label><input type="text" id="aiStyle" placeholder="ex.: moderno, azul e dourado, foto redonda">
+   <div class="msg" id="aiMsg">Copia as instruções, cola-as no Claude ou ChatGPT e depois cola aqui o código gerado.</div>
+   <details style="margin-top:6px"><summary style="cursor:pointer;font-weight:600">Colar modelo gerado</summary>
+    <textarea id="pasteTpl" spellcheck="false" placeholder="Cole aqui o JSON ou o HTML gerado pela IA…"></textarea>
+    <div class="row"><button class="pri" id="pasteAdd">Adicionar modelo</button></div></details></div>
+  <div class="gal" id="gal"></div>
   <div class="row"><button class="alt" id="tNew">Novo em branco</button><button class="alt" id="tDup">Duplicar</button><button class="alt" id="tDel">Apagar</button><button class="alt" id="tExp1">Exportar este</button><button class="alt" id="tExp">Exportar todos</button><label class="btn alt" style="margin:0">Importar modelos<input type="file" id="tImp" accept=".json,application/json"></label></div>
-  <div class="msg">O modelo selecionado é o padrão. Pode aplicá-lo a cartões específicos:</div>
+  <div class="msg">O modelo selecionado é o padrão. Ao editar um modelo original, é criada uma cópia e o original mantém-se intacto. Pode aplicá-lo a cartões específicos:</div>
   <div class="row" style="margin-top:0"><button class="pri" id="tAll">Aplicar a todos</button><button class="alt" id="tSel">Aos selecionados</button><button class="alt" id="tClr">Todos usam o padrão</button></div>
   <div class="msg" id="tmsg"></div></div>
  <div class="box"><h2>Editor do design</h2>
-  <div class="eb">
+  <div class="eb nb">
    <input type="text" id="eName" aria-label="Nome do modelo" placeholder="Nome do modelo" style="width:150px">
-   <button class="alt" data-add="text">+ Texto</button><button class="alt" data-add="rect">+ Retângulo</button><button class="alt" data-add="circle">+ Círculo</button><button class="alt" data-add="line">+ Linha</button>
+   <span class="sep"></span>
+   <button class="alt" id="eUndo" title="Desfazer (Ctrl+Z)">Desfazer</button><button class="alt" id="eRedo" title="Refazer (Ctrl+Shift+Z ou Ctrl+Y)">Refazer</button>
+   <span class="sep"></span>
+   <span class="zm"><button class="alt" id="eZoomOut" title="Diminuir zoom" aria-label="Diminuir zoom"></button><button class="alt" id="eZoomLbl" title="Ajustar ao ecrã">100%</button><button class="alt" id="eZoomIn" title="Aumentar zoom" aria-label="Aumentar zoom"></button></span>
+   <span class="sep"></span>
+   <select id="eExp" aria-label="Exportar modelo" title="Exportar o modelo em edição"><option value="">Exportar…</option><option value="png">Imagem PNG</option><option value="jpg">Imagem JPG</option><option value="pdf">PDF</option></select>
+   <button class="alt" id="eMirAll">Espelhar tudo</button><button class="alt" id="eReset">Repor original</button><button id="eProps">Propriedades</button>
+   <span class="msg" id="eStat"></span>
+  </div>
+  <div class="eb nb">
+   <button class="alt" data-add="text">+ Texto</button>
+   <select id="eTextType" aria-label="Tipo de texto"><option value="">+ Tipo de texto…</option><option value="title">Título</option><option value="sub">Subtítulo</option><option value="para">Parágrafo</option><option value="label">Etiqueta</option><option value="badge">Destaque (selo)</option></select>
+   <span class="sep"></span>
+   <button class="alt" data-add="rect">+ Retângulo</button><button class="alt" data-add="circle">+ Círculo</button><button class="alt" data-add="line">+ Linha</button>
+   <select id="eShape" aria-label="Inserir forma"><option value="">+ Forma…</option><option value="rrect">Retângulo arredondado</option><option value="tri">Triângulo</option><option value="diamond">Losango</option><option value="hex">Hexágono</option><option value="star">Estrela</option><option value="arrow">Seta</option><option value="ring">Anel</option><option value="wave">Onda</option></select>
    <label class="btn alt" style="margin:0">+ Imagem<input type="file" id="eImg" accept="image/*"></label>
    <select id="eField" aria-label="Inserir campo"></select>
-   <button class="alt" id="eMirAll">Espelhar tudo</button><button class="alt" id="eUndo">Desfazer</button><button class="alt" id="eReset">Repor original</button><button id="eProps">Propriedades</button>
+  </div>
+  <div class="eb">
+   <select id="eFont" data-tx aria-label="Fonte" title="Fonte"><option value="">Fonte…</option><option value="Montserrat">Montserrat</option><option value="Inter">Inter</option><option value="Arial">Arial</option><option value="Verdana">Verdana</option><option value="Trebuchet">Trebuchet</option><option value="Georgia">Georgia</option><option value="Times">Times New Roman</option><option value="Courier">Courier New</option><option value="Impact">Impact</option></select>
+   <input type="number" id="eSize" data-tx min="4" max="400" aria-label="Tamanho do texto" title="Tamanho do texto (px)">
+   <button class="alt ic tg" id="eBold" data-tx title="Negrito" aria-label="Negrito"><i class="bi bi-type-bold"></i></button>
+   <button class="alt ic tg" id="eItalic" data-tx title="Itálico" aria-label="Itálico"><i class="bi bi-type-italic"></i></button>
+   <button class="alt ic tg" id="eUnder" data-tx title="Sublinhado" aria-label="Sublinhado"><i class="bi bi-type-underline"></i></button>
+   <button class="alt ic tg" id="eUpper" data-tx title="MAIÚSCULAS" aria-label="Maiúsculas"><i class="bi bi-alphabet-uppercase"></i></button>
+   <span class="sep"></span>
+   <button class="alt ic tg" data-tx data-ta="left" title="Texto à esquerda" aria-label="Texto à esquerda"><i class="bi bi-text-left"></i></button>
+   <button class="alt ic tg" data-tx data-ta="center" title="Texto ao centro" aria-label="Texto ao centro"><i class="bi bi-text-center"></i></button>
+   <button class="alt ic tg" data-tx data-ta="right" title="Texto à direita" aria-label="Texto à direita"><i class="bi bi-text-right"></i></button>
+   <span class="sep"></span>
+   <span class="cl" title="Cor do texto"><i class="bi bi-fonts"></i><input type="color" id="eColor" data-tx aria-label="Cor do texto"></span>
+   <span class="cl" title="Cor de preenchimento (formas e fundos)"><i class="bi bi-paint-bucket"></i><input type="color" id="eFill" aria-label="Cor de preenchimento"></span>
+   <span class="sep"></span>
+   <button class="alt ic" data-al="l" title="Alinhar à esquerda do cartão" aria-label="Alinhar à esquerda do cartão"><i class="bi bi-align-start"></i></button>
+   <button class="alt ic" data-al="ch" title="Centrar na horizontal" aria-label="Centrar na horizontal"><i class="bi bi-align-center"></i></button>
+   <button class="alt ic" data-al="r" title="Alinhar à direita do cartão" aria-label="Alinhar à direita do cartão"><i class="bi bi-align-end"></i></button>
+   <button class="alt ic" data-al="t" title="Alinhar ao topo" aria-label="Alinhar ao topo"><i class="bi bi-align-top"></i></button>
+   <button class="alt ic" data-al="cv" title="Centrar na vertical" aria-label="Centrar na vertical"><i class="bi bi-align-middle"></i></button>
+   <button class="alt ic" data-al="b" title="Alinhar à base" aria-label="Alinhar à base"><i class="bi bi-align-bottom"></i></button>
   </div>
   <div class="em">
    <div id="ec"><div id="ewrap"><div id="est" class="stage"></div><div id="selbox"><i id="hdl"></i></div></div></div>
@@ -580,7 +639,7 @@ function render(){
   }
   if(tab==="tpl"){
     const s=picked.size?students[[...picked][0]]:students[0]||SAMPLE[0];
-    $("gal").innerHTML=templates.map(t=>`<div class="tt${t.id===activeId?" on":""}" data-id="${t.id}"><div class="tw" data-sc><div class="stage">${fill(t.html,s)}</div></div>${esc(t.name)}</div>`).join("");
+    $("gal").innerHTML=templates.map(t=>`<div class="tt${t.id===activeId?" on":""}" data-id="${t.id}"><div class="tw" data-sc><div class="stage">${fill(t.html,s)}</div></div><div class="tn" title="${esc(t.name)}">${esc(t.name)}</div></div>`).join("");
     rescale($("gal"));fitNames($("gal"));
   }
 }
@@ -670,9 +729,9 @@ document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>show(b.dataset
 /* ===== galeria de modelos ===== */
 $("gal").addEventListener("click",e=>{const d=e.target.closest(".tt");if(!d)return;persist();activeId=d.dataset.id;tpl=cur().html;persist();render();openEd()});
 const uid=()=>"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-function addTemplate(name,html){persist();const t={id:uid(),name,html};templates.push(t);activeId=t.id;tpl=html;persist();render();openEd()}
+function addTemplate(name,html,from){persist();const t={id:uid(),name,html};if(from)t.from=from;templates.push(t);activeId=t.id;tpl=html;persist();render();openEd()}
 $("tNew").onclick=()=>addTemplate("Novo modelo",BLANK_TPL);
-$("tDup").onclick=()=>addTemplate(cur().name+" (cópia)",tpl);
+$("tDup").onclick=()=>addTemplate(cur().name+" (cópia)",tpl,cur().from||(isOrig(cur())?cur().id:""));
 $("tDel").onclick=()=>{if(templates.length<2)return;templates=templates.filter(t=>t.id!==activeId);students.forEach((s,i)=>{if(s.__tpl&&!templates.some(t=>t.id===s.__tpl))setS(i,"__tpl","")});activeId=templates[0].id;tpl=cur().html;persist();render();openEd()};
 const setAll=(idx,v)=>{idx.forEach(i=>setS(i,"__tpl",v));persist();render();$("tmsg").textContent=`Modelo aplicado a ${idx.length} cartões.`};
 $("tAll").onclick=()=>setAll(students.map((s,i)=>i),activeId);
@@ -682,29 +741,103 @@ const dl=(data,name)=>{const a=document.createElement("a");a.href=URL.createObje
 const expT=(l,n)=>{persist();dl(new Blob([JSON.stringify({app:"eduall-cards-templates",version:1,templates:l},null,2)],{type:"application/json"}),n)};
 $("tExp").onclick=()=>expT(templates,"modelos-eduall-cards.json");
 $("tExp1").onclick=()=>expT([cur()],"modelo-"+slug(cur().name)+".json");
+/* ===== importar modelos (ficheiro ou código colado) ===== */
+const safeHtml=h=>clean(String(h||"")
+  .replace(/<\s*(script|iframe|object|embed|style|link|meta)\b[\s\S]*?<\/\s*\1\s*>/gi,"")
+  .replace(/<\s*(script|iframe|object|embed|style|link|meta)\b[^>]*>/gi,"")
+  .replace(/\son(?!error="this\.style\.visibility='hidden'")\w+\s*=\s*("[^"]*"|'[^']*')/gi,"")
+  .replace(/javascript:/gi,""));
+function parseTemplates(raw){
+  let t=String(raw||"").trim();
+  const fence=t.match(/```(?:json|html)?\s*([\s\S]*?)```/i);if(fence)t=fence[1].trim();
+  try{const p=JSON.parse(t),arr=(Array.isArray(p)?p:p.templates||(p.html?[p]:[])).filter(x=>x&&typeof x.html==="string");if(arr.length)return arr}catch(e){}
+  if(/<\w+[^>]*>/.test(t))return[{name:"Modelo gerado por IA",html:t}];
+  return[]}
+function importTemplates(raw){
+  const arr=parseTemplates(raw);if(!arr.length)throw new Error("invalid");
+  persist();arr.forEach(t=>templates.push({id:uid(),name:t.name||"Importado",html:safeHtml(t.html)}));
+  activeId=templates[templates.length-1].id;tpl=cur().html;persist();render();openEd();
+  $("tmsg").className="msg";$("tmsg").textContent=`${arr.length} modelo(s) importado(s).`;return arr.length}
 $("tImp").onchange=async e=>{const f=e.target.files[0];if(!f)return;
-  try{const p=JSON.parse(await f.text()),arr=(Array.isArray(p)?p:p.templates||(p.html?[p]:[])).filter(t=>t&&typeof t.html==="string");
-    if(!arr.length)throw new Error("nenhum modelo válido encontrado.");
-    persist();arr.forEach(t=>templates.push({id:uid(),name:t.name||"Importado",html:clean(t.html)}));activeId=templates[templates.length-1].id;tpl=cur().html;persist();render();openEd();
-    $("tmsg").className="msg";$("tmsg").textContent=`${arr.length} modelo(s) importado(s).`}
-  catch(err){$("tmsg").className="msg err";$("tmsg").textContent="Ficheiro de modelos inválido."}e.target.value=""};
+  try{importTemplates(await f.text())}catch(err){$("tmsg").className="msg err";$("tmsg").textContent="Ficheiro de modelos inválido."}e.target.value=""};
+$("pasteAdd").onclick=()=>{
+  try{importTemplates($("pasteTpl").value);$("pasteTpl").value="";$("aiMsg").className="msg";$("aiMsg").textContent="Modelo adicionado. Já pode vê-lo na galeria e no editor."}
+  catch(err){$("aiMsg").className="msg err";$("aiMsg").textContent="Não foi possível ler o código. Cole o JSON ou o HTML completo gerado pela IA."}};
+
+/* ===== instruções para a IA (Claude / ChatGPT) ===== */
+const AI_PROMPT=style=>`Cria modelos de cartão de estudante para a app "eduall cards". Segue EXATAMENTE este formato.
+
+ESTILO PEDIDO: ${style||"livre — cria um design profissional, moderno e legível"}
+
+1) FORMATO DO MODELO
+- O cartão é um palco de 1024 x 640 px (paisagem, 85,6 x 54 mm). Todo o conteúdo tem de caber nesse tamanho, com margens de pelo menos 24 px.
+- O modelo é só um fragmento HTML: uma sequência de elementos irmãos (div, img, svg) SEM wrapper, SEM html/head/body, SEM tag style, SEM tag script, SEM classes e SEM JavaScript. Todo o CSS é inline (atributo style).
+- Cada elemento de topo é posicionado com style="left:Xpx;top:Ypx;width:Wpx;height:Hpx;..." (a app já aplica position:absolute a todos). A ordem no código é a ordem das camadas (o último fica por cima).
+- Fonte: Montserrat (já aplicada). Textos com white-space:nowrap, font-size em px, font-weight numérico e cores em hexadecimal. Fundos, faixas, círculos e ondas fazem-se com div (border-radius) ou svg com viewBox e preserveAspectRatio="none".
+- Não uses imagens nem fontes externas: a decoração é só com formas CSS/SVG.
+
+2) CAMPOS DISPONÍVEIS (escreve exatamente assim, com chavetas duplas; a app substitui pelos dados reais do aluno)
+Texto: {{fullName}} {{enrollmentNumber}} {{class}} {{grade}} {{course}} {{period}} {{room}} {{initials}} {{schoolName}} {{subtitle}} {{address}} {{phones}} {{title}} {{dirLabel}}
+Imagens (para usar em src): {{photo}} {{logo}} {{signature}} {{barcode}}
+
+- Nome do aluno: usa data-fit="1" com width definido e white-space:nowrap, para a app reduzir a fonte nos nomes compridos. Exemplo:
+<div data-fit="1" style="left:350px;top:195px;width:640px;font-size:36px;font-weight:800;color:#0b4f9c;text-transform:uppercase;white-space:nowrap">{{fullName}}</div>
+- Foto: primeiro um div de fundo com {{initials}} e por cima o img:
+<div style="left:50px;top:190px;width:260px;height:330px;background-color:#e9e4dc;display:flex;align-items:center;justify-content:center;font-size:80px;font-weight:700;color:#a99b87;border-radius:14px">{{initials}}</div>
+<img src="{{photo}}" onerror="this.style.visibility='hidden'" style="left:50px;top:190px;width:260px;height:330px;object-fit:cover;border-radius:14px">
+- Logótipo: <img src="{{logo}}" onerror="this.style.visibility='hidden'" style="left:40px;top:22px;width:106px;height:106px;object-fit:contain">
+- Assinatura: <img src="{{signature}}" style="left:790px;top:478px;width:170px;height:56px;object-fit:contain"> com uma linha (div de 2 px) por baixo e a legenda {{dirLabel}}.
+- Código de barras: <img src="{{barcode}}" style="left:50px;top:525px;width:240px;height:40px;object-fit:fill"> e por baixo o texto {{enrollmentNumber}}.
+- O cartão deve mostrar: foto, nome, nº de matrícula, turma, curso, período, escola (logótipo + nome + subtítulo), título do cartão e assinatura. Classe e sala são opcionais. Endereço e telefones no rodapé.
+- Nunca escrevas dados reais de alunos no modelo: só campos {{...}}.
+
+3) PRÉ-VISUALIZAÇÃO (obrigatória)
+Depois de criares o modelo, gera uma página HTML de pré-visualização (artefacto/canvas) que mostre o cartão em 1024 x 640 px (reduzido com transform:scale para caber no ecrã) para 3 alunos de exemplo, usando EXATAMENTE o mesmo HTML do modelo. O palco é um div position:relative;width:1024px;height:640px;overflow:hidden;font-family:Montserrat e todos os filhos diretos têm position:absolute. Substitui os campos {{...}} por dados de exemplo (nomes angolanos, matrículas como 2026-0001, turmas, cursos, períodos Manhã/Tarde/Noite) e usa como {{photo}} fotos de pessoas reais online, por exemplo https://randomuser.me/api/portraits/men/32.jpg, https://randomuser.me/api/portraits/women/44.jpg, https://randomuser.me/api/portraits/men/75.jpg (ou https://i.pravatar.cc/300?img=12). Para {{logo}} usa um logótipo de exemplo em SVG (data URI), para {{signature}} uma assinatura SVG simples e para {{barcode}} um SVG de barras simples. Mostra os 3 cartões para eu validar. Corrige o design até estar bom (sem texto cortado, nada fora do cartão, bom contraste).
+
+4) RESULTADO FINAL
+Quando eu aprovar a pré-visualização, entrega o código para importar num ÚNICO bloco de código, em JSON válido neste formato (o html é uma string numa só linha, com as aspas duplas escapadas como \\"):
+{"app":"eduall-cards-templates","version":1,"templates":[{"name":"Nome do modelo","html":"<div style=\\"left:0px;top:0px;...\\"></div>..."}]}
+Podes incluir vários modelos no array templates. Se for só um, também podes devolver apenas o HTML puro do modelo num bloco de código.
+Termina a resposta com esta instrução para mim: "Copia o código acima e cola-o no eduall cards, em Modelos › Colar modelo gerado (ou guarda-o como .json e usa Importar modelos)."`;
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;left:-9999px";document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}a.remove();return ok}}
+$("aiCopy").onclick=async()=>{const ok=await copyText(AI_PROMPT($("aiStyle").value.trim())),m=$("aiMsg");
+  m.className=ok?"msg":"msg err";
+  m.textContent=ok?"Instruções copiadas! Cole no Claude ou ChatGPT. Depois copie o código gerado e cole-o em «Colar modelo gerado».":"Não foi possível copiar automaticamente."};
 
 /* ===== editor ===== */
-const est=$("est");let tdom,sel=-1,hist=[],scale=1,propsFor=-1,rt;
-const PR=[["Esquerda (x)","left","px"],["Topo (y)","top","px"],["Largura","width","px"],["Altura","height","px"],["Tamanho do texto","fontSize","px"],["Peso (300-800)","fontWeight",""],["Raio dos cantos","borderRadius","px"],["Cor do texto","color","c"],["Cor de fundo","backgroundColor","c"],["Espessura da borda","borderWidth","px"],["Cor da borda","borderColor","c"],["Alinhamento","textAlign","s:left,center,right"],["Ajuste da imagem","objectFit","s:cover,contain,fill"],["Opacidade","opacity",""]];
+const est=$("est");let tdom,sel=-1,hist=[],redoSt=[],lastKey="",lastT=0,scale=1,propsFor=-1,rt;
+const PR=[["Esquerda (x)","left","px"],["Topo (y)","top","px"],["Largura","width","px"],["Altura","height","px"],["Tamanho do texto","fontSize","px"],["Peso (300-800)","fontWeight",""],["Raio dos cantos","borderRadius","px"],["Cor do texto","color","c"],["Cor de fundo","backgroundColor","c"],["Espessura da borda","borderWidth","px"],["Cor da borda","borderColor","c"],["Alinhamento","textAlign","s:left,center,right"],["Ajuste da imagem","objectFit","s:cover,contain,fill"],["Opacidade","opacity",""],["Espaçamento letras","letterSpacing","px"],["Altura da linha","lineHeight",""]];
 const RD={borderWidth:"borderTopWidth",borderColor:"borderTopColor"};
 const ADD={text:'<div style="left:200px;top:300px;font-size:24px;font-weight:600;color:#111111;white-space:nowrap">Novo texto</div>',
   rect:'<div style="left:200px;top:300px;width:200px;height:80px;background-color:#111111"></div>',
   circle:'<div style="left:200px;top:300px;width:120px;height:120px;border-radius:50%;background-color:#111111"></div>',
   line:'<div style="left:200px;top:300px;width:300px;height:3px;background-color:#111111"></div>'};
 const rgb2hex=c=>{const m=(c||"").match(/[\d.]+/g);if(!m||(m.length>3&&+m[3]===0))return"#ffffff";return"#"+m.slice(0,3).map(n=>(+n|0).toString(16).padStart(2,"0")).join("")};
-function efit(){const c=$("ec");scale=Math.max(.2,Math.min(1,(c.clientWidth-24)/1024,(c.clientHeight-24)/640));$("ewrap").style.width=1024*scale+"px";$("ewrap").style.height=640*scale+"px";est.style.transform=`scale(${scale})`}
+
+/* Modelos originais (de fábrica) nunca são alterados: a primeira edição cria uma cópia */
+const isOrig=t=>FACTORY.some(f=>f.id===t.id);
+function ensureCopy(){
+  const c=cur();if(!isOrig(c))return false;
+  const n={id:uid(),name:c.name+" (cópia)",html:c.html,from:c.id};
+  templates.push(n);activeId=n.id;
+  $("eName").value=n.name;
+  $("tmsg").className="msg";$("tmsg").textContent=`Cópia criada: "${n.name}". O modelo original mantém-se intacto.`;
+  return true}
+
+let zoom=1;
+function efit(){const c=$("ec"),fit=Math.max(.2,Math.min(1,(c.clientWidth-24)/1024,(c.clientHeight-24)/640));
+  zoom=Math.min(Math.max(zoom,.15/fit),3/fit);scale=fit*zoom;
+  $("ewrap").style.width=1024*scale+"px";$("ewrap").style.height=640*scale+"px";est.style.transform=`scale(${scale})`;
+  $("eZoomLbl").textContent=Math.round(scale*100)+"%"}
+const zoomBy=f=>{zoom*=f;efit();drawSel()};
+$("eZoomIn").onclick=()=>zoomBy(1.25);$("eZoomOut").onclick=()=>zoomBy(.8);$("eZoomLbl").onclick=()=>{zoom=1;efit();drawSel()};
+$("ec").addEventListener("wheel",e=>{if(!(e.ctrlKey||e.metaKey))return;e.preventDefault();zoomBy(e.deltaY<0?1.1:1/1.1)},{passive:false});
 function draw(){est.innerHTML=fill(tdom.innerHTML,students[0]||SAMPLE[0]);[...est.children].forEach((c,i)=>c.dataset.i=i);fitNames(est);drawSel()}
 function drawSel(){const b=$("selbox"),el=est.children[sel];
-  if(!el||el.tagName==="STYLE"){b.style.display="none";propsFor=-1;$("props").innerHTML='<div class="msg">Toque num elemento do cartão para o editar.</div>';return}
+  if(!el||el.tagName==="STYLE"){b.style.display="none";propsFor=-1;$("props").innerHTML='<div class="msg">Toque num elemento do cartão para o editar.</div>';syncBar();return}
   const r=el.getBoundingClientRect(),w=$("ewrap").getBoundingClientRect();
   Object.assign(b.style,{display:"block",left:r.left-w.left+"px",top:r.top-w.top+"px",width:r.width+"px",height:r.height+"px"});
-  if(propsFor!==sel){buildProps();propsFor=sel}syncProps()}
+  if(propsFor!==sel){buildProps();propsFor=sel}syncProps();syncBar()}
 function buildProps(){
   const el=tdom.children[sel],isImg=/^(IMG)$/i.test(el.tagName),txt=!/^(IMG|svg)$/i.test(el.tagName);
   $("props").innerHTML=(txt?'<label for="pText">Texto (pode usar {{campos}})</label><textarea id="pText" style="height:70px"></textarea>':"")
@@ -719,8 +852,16 @@ function buildProps(){
 function syncProps(){const t=est.children[sel];if(!t)return;const cs=getComputedStyle(t);
   $("props").querySelectorAll("[data-p]").forEach(i=>{if(i===document.activeElement)return;const v=cs[RD[i.dataset.p]||i.dataset.p];
     i.value=i.dataset.u==="px"?(Math.round(parseFloat(v))||0):i.dataset.u==="c"?rgb2hex(v):v==="start"?"left":v})}
-function commit(skipCode){hist.push(tpl);if(hist.length>60)hist.shift();tpl=clean(tdom.innerHTML);persist();if(!skipCode)$("code").value=tpl;draw();clearTimeout(rt);rt=setTimeout(render,250)}
-function undo(){if(!hist.length)return;tpl=tdom.innerHTML=hist.pop();persist();$("code").value=tpl;if(sel>=tdom.children.length)sel=-1;propsFor=-1;draw()}
+const histUI=()=>{$("eUndo").disabled=!hist.length;$("eRedo").disabled=!redoSt.length};
+/* key: junta edições seguidas do mesmo controlo (ex.: escrever um número) num só passo de histórico */
+function commit(skipCode,key){ensureCopy();
+  const now=Date.now(),merge=key&&key===lastKey&&now-lastT<900&&hist.length>0;
+  if(!merge){hist.push(tpl);if(hist.length>100)hist.shift()}
+  lastKey=key||"";lastT=now;redoSt=[];
+  tpl=clean(tdom.innerHTML);persist();if(!skipCode)$("code").value=tpl;draw();histUI();clearTimeout(rt);rt=setTimeout(render,250)}
+function restore(str){tpl=str;tdom.innerHTML=str;persist();$("code").value=tpl;if(sel>=tdom.children.length)sel=-1;propsFor=-1;lastKey="";draw();histUI();clearTimeout(rt);rt=setTimeout(render,250)}
+function undo(){if(!hist.length)return;redoSt.push(tpl);restore(hist.pop())}
+function redo(){if(!redoSt.length)return;hist.push(tpl);restore(redoSt.pop())}
 function addEl(h){tdom.insertAdjacentHTML("beforeend",h);sel=tdom.children.length-1;commit()}
 function mirror(list){list.forEach(i=>{const t=est.children[i],m=tdom.children[i];if(!t||!m||t.tagName==="STYLE")return;
   const w=Math.round(t.getBoundingClientRect().width/scale),cs=getComputedStyle(t),l=parseFloat(cs.left)||0;
@@ -744,32 +885,117 @@ $("hdl").addEventListener("pointerdown",e=>{e.stopPropagation();e.preventDefault
 $("props").addEventListener("input",e=>{const t=e.target,el=tdom.children[sel];if(!el)return;
   if(t.id==="pText")el.innerHTML=t.value;
   else if(t.dataset.p){const p=t.dataset.p;el.style[p]=t.dataset.u==="px"&&t.value!==""?t.value+"px":t.value;if(p==="borderWidth"||p==="borderColor"){el.style.borderStyle="solid";el.style.boxSizing="border-box"}}
-  else return;commit()});
-let ct;$("code").addEventListener("input",()=>{clearTimeout(ct);ct=setTimeout(()=>{tdom.innerHTML=$("code").value;sel=-1;propsFor=-1;commit(true)},500)});
+  else return;commit(false,"p:"+sel+":"+(t.id||t.dataset.p))});
+let ct;$("code").addEventListener("input",()=>{clearTimeout(ct);ct=setTimeout(()=>{tdom.innerHTML=$("code").value;sel=-1;propsFor=-1;commit(true,"code")},500)});
 document.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>addEl(ADD[b.dataset.add]));
 $("eField").onchange=e=>{if(e.target.value)addField(e.target.value,200,300);e.target.value=""};
 $("eImg").onchange=async e=>{const f=e.target.files[0];if(!f)return;addEl(`<img src="${await readFile(f)}" style="left:200px;top:200px;width:200px;height:200px;object-fit:contain">`);e.target.value=""};
-$("eUndo").onclick=undo;
-$("eReset").onclick=()=>{tdom.innerHTML=(FACTORY.find(f=>f.id===activeId)||{html:BLANK_TPL}).html;sel=-1;propsFor=-1;commit()};
+$("eUndo").onclick=undo;$("eRedo").onclick=redo;
+$("eReset").onclick=()=>{
+  const c=cur(),base=FACTORY.find(f=>f.id===(c.from||c.id));
+  if(isOrig(c)){$("eMsg").className="msg";$("eMsg").textContent="Este é um modelo original e já está intacto.";return}
+  tdom.innerHTML=(base||{html:BLANK_TPL}).html;sel=-1;propsFor=-1;commit()};
 $("eDel").onclick=()=>{const m=tdom.children[sel];if(!m)return;m.remove();sel=-1;commit()};
 $("eDup").onclick=()=>{const m=tdom.children[sel];if(!m)return;const c=m.cloneNode(true),cs=getComputedStyle(est.children[sel]);c.style.left=(parseFloat(cs.left)+20)+"px";c.style.top=(parseFloat(cs.top)+20)+"px";m.after(c);sel++;commit()};
 $("eFront").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.appendChild(m);sel=tdom.children.length-1;commit()};
 $("eBack").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.prepend(m);sel=0;commit()};
 $("eProps").onclick=()=>{$("ep").classList.add("open");bd.hidden=false};
 function openEd(){
-  tdom=INERT.createElement("div");tdom.innerHTML=clean(tpl);hist=[];sel=-1;propsFor=-1;
+  tdom=INERT.createElement("div");tdom.innerHTML=clean(tpl);hist=[];redoSt=[];lastKey="";sel=-1;propsFor=-1;
   const keys=[...new Set([...FIELDS,...Object.keys(students[0]||{}).filter(k=>!k.startsWith("__"))])];
   $("eField").innerHTML='<option value="">+ Campo…</option>'+keys.map(k=>`<option value="${esc(k)}">{{${esc(k)}}}</option>`).join("");
-  $("code").value=tpl;$("eName").value=cur().name;buildChips();efit();draw()}
-$("eName").oninput=e=>{cur().name=e.target.value;persist()};
+  $("code").value=tpl;$("eName").value=cur().name;buildChips();efit();draw();histUI()}
+$("eName").oninput=e=>{const v=e.target.value;ensureCopy();cur().name=v;e.target.value=v;persist();clearTimeout(rt);rt=setTimeout(render,250)};
 window.addEventListener("resize",()=>{if(tab==="tpl"){efit();drawSel()}rescale(document)});
 document.addEventListener("keydown",e=>{
-  if(tab!=="tpl"||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
-  if((e.ctrlKey||e.metaKey)&&e.key==="z"){undo();e.preventDefault();return}
+  if(tab!=="tpl"||!tdom)return;
+  const tg=e.target,typing=/TEXTAREA/.test(tg.tagName)||(tg.tagName==="INPUT"&&/^(text|number|search)$/.test(tg.type)),mod=e.ctrlKey||e.metaKey,k=e.key.toLowerCase();
+  if(mod&&!typing&&k==="z"){e.shiftKey?redo():undo();e.preventDefault();return}
+  if(mod&&!typing&&k==="y"){redo();e.preventDefault();return}
+  if(typing||/SELECT/.test(tg.tagName))return;
+  if(!mod&&(e.key==="+"||e.key==="=")){zoomBy(1.25);e.preventDefault();return}
+  if(!mod&&(e.key==="-"||e.key==="_")){zoomBy(.8);e.preventDefault();return}
   const m=tdom.children[sel];if(!m)return;
   if(e.key==="Delete"||e.key==="Backspace"){$("eDel").click();e.preventDefault();return}
   const s=e.shiftKey?10:1,d={ArrowLeft:["left",-s],ArrowRight:["left",s],ArrowUp:["top",-s],ArrowDown:["top",s]}[e.key];
-  if(d){m.style[d[0]]=(parseFloat(getComputedStyle(est.children[sel])[d[0]])+d[1])+"px";commit();e.preventDefault()}});
+  if(d){m.style[d[0]]=(parseFloat(getComputedStyle(est.children[sel])[d[0]])+d[1])+"px";commit(false,"arr:"+sel);e.preventDefault()}});
+
+/* ===== barra de ferramentas: texto, formas, alinhamento ===== */
+const selEl=()=>{const m=tdom&&tdom.children[sel];return m&&m.tagName!=="STYLE"?m:null};
+function note(t,err){const m=$("eStat");m.className="msg"+(err?" err":"");m.textContent=t;clearTimeout(note.t);note.t=setTimeout(()=>{m.textContent=""},4000)}
+function fmt(fn,key){const m=selEl();if(!m){note("Selecione um elemento no cartão.",1);return}fn(m,est.children[sel]);commit(false,key)}
+const isSvg=m=>/^svg$/i.test(m.tagName);
+const ensureW=(m,t)=>{if(!m.style.width&&!/^(IMG|svg)$/i.test(m.tagName))m.style.width=Math.round(t.getBoundingClientRect().width/scale)+"px"};
+const FONTS={Montserrat:"Montserrat,sans-serif",Inter:"Inter,sans-serif",Arial:"Arial,Helvetica,sans-serif",Verdana:"Verdana,sans-serif",Trebuchet:"'Trebuchet MS',sans-serif",Georgia:"Georgia,serif",Times:"'Times New Roman',Times,serif",Courier:"'Courier New',monospace",Impact:"Impact,sans-serif"};
+const FONTKEY={montserrat:"Montserrat",inter:"Inter",arial:"Arial",verdana:"Verdana",trebuchet:"Trebuchet","trebuchet ms":"Trebuchet",georgia:"Georgia","times new roman":"Times",times:"Times","courier new":"Courier",impact:"Impact"};
+$("eBold").onclick=()=>fmt((m,t)=>{m.style.fontWeight=(parseInt(getComputedStyle(t).fontWeight)||400)>=700?"400":"700"});
+$("eItalic").onclick=()=>fmt((m,t)=>{m.style.fontStyle=getComputedStyle(t).fontStyle==="italic"?"normal":"italic"});
+$("eUnder").onclick=()=>fmt((m,t)=>{m.style.textDecoration=/underline/.test(getComputedStyle(t).textDecorationLine)?"none":"underline"});
+$("eUpper").onclick=()=>fmt((m,t)=>{m.style.textTransform=getComputedStyle(t).textTransform==="uppercase"?"none":"uppercase"});
+document.querySelectorAll("[data-ta]").forEach(b=>b.onclick=()=>fmt((m,t)=>{ensureW(m,t);m.style.textAlign=b.dataset.ta}));
+$("eFont").onchange=e=>{const v=e.target.value;if(v)fmt(m=>{m.style.fontFamily=FONTS[v]},"font:"+sel)};
+$("eSize").oninput=e=>{const v=parseFloat(e.target.value);if(v>0)fmt(m=>{m.style.fontSize=v+"px"},"fsize:"+sel)};
+$("eColor").oninput=e=>fmt(m=>{m.style.color=e.target.value},"col:"+sel);
+$("eFill").oninput=e=>fmt(m=>{
+  if(isSvg(m))m.querySelectorAll("path,polygon,circle,rect,ellipse,polyline").forEach(n=>n.setAttribute("fill",e.target.value));
+  else m.style.backgroundColor=e.target.value},"fill:"+sel);
+document.querySelectorAll("[data-al]").forEach(b=>b.onclick=()=>fmt((m,t)=>{
+  const r=t.getBoundingClientRect(),w=r.width/scale,h=r.height/scale,k=b.dataset.al;
+  const L=k==="l"?0:k==="ch"?(1024-w)/2:k==="r"?1024-w:null,T=k==="t"?0:k==="cv"?(640-h)/2:k==="b"?640-h:null;
+  if(L!==null)m.style.left=Math.round(L)+"px";if(T!==null)m.style.top=Math.round(T)+"px"}));
+const TEXTS={
+ title:'<div style="left:60px;top:60px;font-size:48px;font-weight:800;color:#111111;white-space:nowrap">Título</div>',
+ sub:'<div style="left:60px;top:130px;font-size:26px;font-weight:600;color:#555555;white-space:nowrap">Subtítulo</div>',
+ para:'<div style="left:60px;top:300px;width:420px;font-size:18px;font-weight:400;line-height:1.5;color:#333333;white-space:normal">Texto de parágrafo. Escreva aqui a sua mensagem.</div>',
+ label:'<div style="left:60px;top:300px;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#777777;white-space:nowrap">Etiqueta</div>',
+ badge:'<div style="left:60px;top:300px;padding:8px 20px;border-radius:20px;background-color:#0D99FF;color:#ffffff;font-size:18px;font-weight:700;white-space:nowrap">Destaque</div>'};
+$("eTextType").onchange=e=>{const k=e.target.value;e.target.value="";if(k&&TEXTS[k])addEl(TEXTS[k])};
+const svs=(d,w,h,x="",vb="0 0 100 100")=>`<svg style="left:200px;top:300px;width:${w}px;height:${h}px" viewBox="${vb}" preserveAspectRatio="none"><path ${x}d="${d}" fill="#111111"/></svg>`;
+const SHAPES={
+ rrect:'<div style="left:200px;top:300px;width:220px;height:110px;border-radius:24px;background-color:#111111"></div>',
+ tri:svs("M50 4L96 96H4Z",140,140),
+ diamond:svs("M50 2L98 50L50 98L2 50Z",140,140),
+ hex:svs("M25 5H75L100 50L75 95H25L0 50Z",140,140),
+ star:svs("M50 3L61 38H98L68 59L79 95L50 73L21 95L32 59L2 38H39Z",140,140),
+ arrow:svs("M0 35H60V10L100 50L60 90V65H0Z",200,120),
+ ring:svs("M50 0A50 50 0 1 0 50 100A50 50 0 1 0 50 0ZM50 16A34 34 0 1 1 50 84A34 34 0 1 1 50 16Z",140,140,'fill-rule="evenodd" '),
+ wave:svs("M0 30Q25 0 50 30T100 30T150 30T200 30V60H0Z",400,120,"","0 0 200 60")};
+$("eShape").onchange=e=>{const k=e.target.value;e.target.value="";if(k&&SHAPES[k])addEl(SHAPES[k])};
+function syncBar(){
+  const m=selEl(),t=est.children[sel],has=!!(m&&t&&t.tagName!=="STYLE"),txt=has&&!/^(IMG|svg)$/i.test(m.tagName);
+  document.querySelectorAll("[data-tx]").forEach(b=>b.disabled=!txt);
+  document.querySelectorAll("[data-al]").forEach(b=>b.disabled=!has);
+  $("eFill").disabled=!has;
+  const tg=(id,on)=>$(id).classList.toggle("on",!!on);
+  if(!has){["eBold","eItalic","eUnder","eUpper"].forEach(i=>tg(i,0));document.querySelectorAll("[data-ta]").forEach(b=>b.classList.remove("on"));return}
+  const cs=getComputedStyle(t),ac=document.activeElement;
+  tg("eBold",(parseInt(cs.fontWeight)||400)>=700);tg("eItalic",cs.fontStyle==="italic");tg("eUnder",/underline/.test(cs.textDecorationLine));tg("eUpper",cs.textTransform==="uppercase");
+  const al=cs.textAlign==="start"?"left":cs.textAlign;document.querySelectorAll("[data-ta]").forEach(b=>b.classList.toggle("on",b.dataset.ta===al));
+  if(ac!==$("eSize"))$("eSize").value=Math.round(parseFloat(cs.fontSize))||"";
+  const fam=(cs.fontFamily.split(",")[0]||"").replace(/["']/g,"").trim().toLowerCase();if(ac!==$("eFont"))$("eFont").value=FONTKEY[fam]||"";
+  if(ac!==$("eColor"))$("eColor").value=rgb2hex(cs.color);
+  if(ac!==$("eFill")){let f;if(isSvg(m)){const n=m.querySelector("[fill]");f=n&&/^#[0-9a-f]{6}$/i.test(n.getAttribute("fill"))?n.getAttribute("fill"):"#000000"}else f=rgb2hex(cs.backgroundColor);$("eFill").value=f}}
+
+/* ===== exportar o modelo em edição (PNG, JPG ou PDF) ===== */
+async function renderCard(html,s,k){
+  const holder=$("off"),photo=photos[s.enrollmentNumber]||s.__photo||s.photoUrl||"",lgo=(s.__o&&s.__o.logo)||logo;
+  await Promise.all([photo,lgo].filter(Boolean).map(toData));
+  holder.innerHTML=`<div class="stage">${fill(html,s)}</div>`;
+  const el=holder.firstElementChild,imgs=[...el.querySelectorAll("img")],pSrc=photo?(imgCache[photo]||photo):BLANK;
+  await document.fonts.ready;
+  for(const im of imgs)await bake(im,$("coverPh").checked&&im.getAttribute("src")===pSrc);
+  await Promise.all(imgs.map(ready));fitNames(el);
+  try{return await html2canvas(el,{scale:k,useCORS:true,backgroundColor:"#ffffff",logging:false,scrollX:0,scrollY:0,imageTimeout:20000})}
+  finally{holder.innerHTML=""}}
+async function exportCurrent(kind){
+  const s=students[0]||SAMPLE[0],name="modelo-"+slug(cur().name||"cartao");note("A exportar…");
+  try{
+    const c=await renderCard(clean(tdom.innerHTML),s,kind==="pdf"?2:3);
+    if(kind==="pdf"){const {jsPDF}=window.jspdf,pdf=new jsPDF({orientation:"landscape",unit:"mm",format:[85.6,54]});pdf.addImage(c.toDataURL("image/jpeg",.95),"JPEG",0,0,85.6,54);dl(pdf.output("blob"),name+".pdf")}
+    else{const png=kind==="png";await new Promise(ok=>c.toBlob(b=>{dl(b,name+(png?".png":".jpg"));ok()},png?"image/png":"image/jpeg",.95))}
+    note(students.length?"Exportado com os dados do 1.º aluno.":"Exportado com dados de exemplo.")
+  }catch(err){note("Não foi possível exportar. Tente novamente.",1)}}
+$("eExp").onchange=async e=>{const k=e.target.value;e.target.value="";if(k)await exportCurrent(k)};
 const FIELDS=["fullName","enrollmentNumber","class","grade","course","period","room","initials","photo","logo","signature","schoolName","subtitle","address","phones","title","dirLabel","barcode"];
 const IMGF=["photo","logo","signature","barcode"];
 function addField(k,x,y){let h;
@@ -848,7 +1074,7 @@ $("pImp").onchange=async e=>{const f=e.target.files[0];if(!f)return;const j=$("j
 /* ===== ícones nos botões ===== */
 (function(){
 const pre=(el,n)=>el&&el.insertAdjacentHTML("afterbegin",`<i class="bi bi-${n}"></i>`);
-const IC={load:"check2",sample:"stars",logoReset:"arrow-counterclockwise",logoCut:"eraser",abAll:"people",abVis:"eye",abSel:"check2-square",exp:"download",expSel:"download",expAll:"download",expGroups:"folder2",pExp:"save",fCopy:"copy",fDown:"file-earmark-arrow-down",selVis:"check2-all",selNone:"x-lg",editSel:"pencil",tNew:"plus-lg",tDup:"files",tDel:"trash",tExp1:"box-arrow-up",tExp:"box-arrow-up",tAll:"check2",tSel:"check2-square",tClr:"arrow-counterclockwise",mdSave:"check2",mdClr:"eraser",mdX:"x-lg",epX:"x-lg",eMirAll:"symmetry-vertical",eUndo:"arrow-counterclockwise",eReset:"arrow-repeat",eProps:"sliders",eMir:"symmetry-vertical",eDup:"files",eDel:"trash",eFront:"layer-forward",eBack:"layer-backward"};
+const IC={load:"check2",sample:"stars",logoReset:"arrow-counterclockwise",logoCut:"eraser",abAll:"people",abVis:"eye",abSel:"check2-square",exp:"download",expSel:"download",expAll:"download",expGroups:"folder2",pExp:"save",fCopy:"copy",fDown:"file-earmark-arrow-down",selVis:"check2-all",selNone:"x-lg",editSel:"pencil",tNew:"plus-lg",tDup:"files",tDel:"trash",tExp1:"box-arrow-up",tExp:"box-arrow-up",tAll:"check2",tSel:"check2-square",tClr:"arrow-counterclockwise",mdSave:"check2",mdClr:"eraser",mdX:"x-lg",epX:"x-lg",eMirAll:"symmetry-vertical",eUndo:"arrow-counterclockwise",eReset:"arrow-repeat",eProps:"sliders",eZoomIn:"zoom-in",eZoomOut:"zoom-out",aiCopy:"stars",eRedo:"arrow-clockwise",pasteAdd:"clipboard-plus",eMir:"symmetry-vertical",eDup:"files",eDel:"trash",eFront:"layer-forward",eBack:"layer-backward"};
 const LB={file:"file-earmark-arrow-up",photos:"images",logoFile:"image",sigFile:"pen",pImp:"folder2-open",tImp:"box-arrow-in-down",eImg:"image"};
 Object.entries(IC).forEach(([id,n])=>pre($(id),n));
 Object.entries(LB).forEach(([id,n])=>pre($(id).parentElement,n));

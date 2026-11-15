@@ -207,6 +207,42 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
 }
 @media(pointer:coarse){#hdl{width:18px;height:18px;right:-9px;bottom:-9px}}
 </style>
+<style id="multi-theme">
+#board{position:relative;flex:none;min-width:100%}
+.bh{position:absolute;height:26px;display:flex;align-items:center;gap:6px;font:600 11px Inter,system-ui,sans-serif;color:var(--mut);cursor:grab;touch-action:none;user-select:none;overflow:hidden}
+.bh.on{color:var(--p)}
+.bh .bn{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bh button.bx{height:20px;width:20px;min-height:0;padding:0;border:0;background:transparent;color:var(--mut);font-size:16px;line-height:1}
+.bs{position:absolute;overflow:hidden;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.08);cursor:pointer}
+.bs:hover{box-shadow:0 0 0 2px var(--p)}
+#ordBtn{order:3;margin-left:8px;flex:none;white-space:nowrap}
+#ordM{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:12px}
+#ordM[hidden]{display:none}
+#ordM .om{background:#fff;border-radius:12px;width:min(96vw,860px);max-height:94vh;display:flex;flex-direction:column;overflow:hidden}
+#ordM .ordgrid{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px}
+#ordM textarea{height:70px;font:400 12px Inter,system-ui,sans-serif}
+#ordM .ck2{display:flex;gap:8px;align-items:flex-start;font-size:12px;font-weight:500;color:var(--ink);margin:12px 0 0}
+#ordM .ck2 input{width:auto;height:auto;margin:2px 0 0;accent-color:var(--p)}
+#ordM .ords{background:var(--bg);border-radius:10px;padding:14px;align-self:start;position:sticky;top:0}
+#ordM .ords h3{margin:0 0 6px;font-size:13px}
+#ordM .sr{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}
+#ordM .sr small{display:block;color:var(--mut)}
+#ordM .sr b{white-space:nowrap}
+#ordM .st{display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;font-weight:700}
+#ordM .st b{font-size:20px;color:var(--p)}
+@media(max-width:700px){#ordM .ordgrid{grid-template-columns:1fr}#ordBtn .ol{display:none}}
+</style>
+<style id="order-theme">
+#ordM .pcs{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+#ordM .pc{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;transition:border-color .15s,background .15s}
+#ordM .pc.on{border-color:var(--p);background:var(--pl)}
+#ordM .pc img{width:76px;height:76px;object-fit:contain;flex:none;background:#fff;border-radius:8px;border:1px solid var(--line)}
+#ordM .pcb{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;font-size:12px}
+#ordM .pcb b{font-size:13px}
+#ordM .pcb span{color:var(--mut);font-size:11px;line-height:1.35}
+#ordM .pcb .ck2{margin:6px 0 0}
+#ordM .pcb input[type=number]{max-width:110px}
+</style>
 </head>
 <body>
 <header class="hd">
@@ -290,7 +326,7 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
    <span class="sep"></span>
    <span class="zm"><button class="alt" id="eZoomOut" title="Diminuir zoom" aria-label="Diminuir zoom"></button><button class="alt" id="eZoomLbl" title="Ajustar ao ecrã">100%</button><button class="alt" id="eZoomIn" title="Aumentar zoom" aria-label="Aumentar zoom"></button></span>
    <span class="sep"></span>
-   <select id="eExp" aria-label="Exportar modelo" title="Exportar o modelo em edição"><option value="">Exportar…</option><option value="png">Imagem PNG</option><option value="jpg">Imagem JPG</option><option value="pdf">PDF</option></select>
+   <select id="eExp" aria-label="Exportar modelo" title="Exportar o modelo em edição"><option value="">Exportar…</option><option value="png">Imagem PNG</option><option value="jpg">Imagem JPG</option><option value="pdf">PDF</option><option value="pdfall">PDF com todos os modelos do canvas</option></select>
    <button class="alt" id="eMirAll">Espelhar tudo</button><button class="alt" id="eReset">Repor original</button><button id="eProps">Propriedades</button>
    <span class="msg" id="eStat"></span>
   </div>
@@ -640,7 +676,7 @@ function render(){
   if(tab==="tpl"){
     const s=picked.size?students[[...picked][0]]:students[0]||SAMPLE[0];
     $("gal").innerHTML=templates.map(t=>`<div class="tt${t.id===activeId?" on":""}" data-id="${t.id}"><div class="tw" data-sc><div class="stage">${fill(t.html,s)}</div></div><div class="tn" title="${esc(t.name)}">${esc(t.name)}</div></div>`).join("");
-    rescale($("gal"));fitNames($("gal"));
+    rescale($("gal"));fitNames($("gal"));if(typeof layoutBoard==="function"&&$("board"))layoutBoard();
   }
 }
 function fillValues(){const by=$("by").value,sel=$("val");if(!by){sel.innerHTML="";sel.disabled=true;return}
@@ -818,7 +854,7 @@ const rgb2hex=c=>{const m=(c||"").match(/[\d.]+/g);if(!m||(m.length>3&&+m[3]===0
 const isOrig=t=>FACTORY.some(f=>f.id===t.id);
 function ensureCopy(){
   const c=cur();if(!isOrig(c))return false;
-  const n={id:uid(),name:c.name+" (cópia)",html:c.html,from:c.id};
+  const n={id:uid(),name:c.name+" (cópia)",html:c.html,from:c.id,ob:true,bx:c.bx||0,by:c.by||0};c.ob=false;
   templates.push(n);activeId=n.id;
   $("eName").value=n.name;
   $("tmsg").className="msg";$("tmsg").textContent=`Cópia criada: "${n.name}". O modelo original mantém-se intacto.`;
@@ -828,7 +864,7 @@ let zoom=1;
 function efit(){const c=$("ec"),fit=Math.max(.2,Math.min(1,(c.clientWidth-24)/1024,(c.clientHeight-24)/640));
   zoom=Math.min(Math.max(zoom,.15/fit),3/fit);scale=fit*zoom;
   $("ewrap").style.width=1024*scale+"px";$("ewrap").style.height=640*scale+"px";est.style.transform=`scale(${scale})`;
-  $("eZoomLbl").textContent=Math.round(scale*100)+"%"}
+  $("eZoomLbl").textContent=Math.round(scale*100)+"%";layoutBoard()}
 const zoomBy=f=>{zoom*=f;efit();drawSel()};
 $("eZoomIn").onclick=()=>zoomBy(1.25);$("eZoomOut").onclick=()=>zoomBy(.8);$("eZoomLbl").onclick=()=>{zoom=1;efit();drawSel()};
 $("ec").addEventListener("wheel",e=>{if(!(e.ctrlKey||e.metaKey))return;e.preventDefault();zoomBy(e.deltaY<0?1.1:1/1.1)},{passive:false});
@@ -900,7 +936,7 @@ $("eDup").onclick=()=>{const m=tdom.children[sel];if(!m)return;const c=m.cloneNo
 $("eFront").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.appendChild(m);sel=tdom.children.length-1;commit()};
 $("eBack").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.prepend(m);sel=0;commit()};
 $("eProps").onclick=()=>{$("ep").classList.add("open");bd.hidden=false};
-function openEd(){
+function openEd(){placeActive();
   tdom=INERT.createElement("div");tdom.innerHTML=clean(tpl);hist=[];redoSt=[];lastKey="";sel=-1;propsFor=-1;
   const keys=[...new Set([...FIELDS,...Object.keys(students[0]||{}).filter(k=>!k.startsWith("__"))])];
   $("eField").innerHTML='<option value="">+ Campo…</option>'+keys.map(k=>`<option value="${esc(k)}">{{${esc(k)}}}</option>`).join("");
@@ -995,7 +1031,7 @@ async function exportCurrent(kind){
     else{const png=kind==="png";await new Promise(ok=>c.toBlob(b=>{dl(b,name+(png?".png":".jpg"));ok()},png?"image/png":"image/jpeg",.95))}
     note(students.length?"Exportado com os dados do 1.º aluno.":"Exportado com dados de exemplo.")
   }catch(err){note("Não foi possível exportar. Tente novamente.",1)}}
-$("eExp").onchange=async e=>{const k=e.target.value;e.target.value="";if(k)await exportCurrent(k)};
+$("eExp").onchange=async e=>{const k=e.target.value;e.target.value="";if(k==="pdfall")await exportBoard();else if(k)await exportCurrent(k)};
 const FIELDS=["fullName","enrollmentNumber","class","grade","course","period","room","initials","photo","logo","signature","schoolName","subtitle","address","phones","title","dirLabel","barcode"];
 const IMGF=["photo","logo","signature","barcode"];
 function addField(k,x,y){let h;
@@ -1079,6 +1115,132 @@ const LB={file:"file-earmark-arrow-up",photos:"images",logoFile:"image",sigFile:
 Object.entries(IC).forEach(([id,n])=>pre($(id),n));
 Object.entries(LB).forEach(([id,n])=>pre($(id).parentElement,n));
 })();
+
+/* ===== CANVAS COM VÁRIOS MODELOS ===== */
+const HDR=26,GAP=90,board=document.createElement("div");
+board.id="board";$("ec").insertBefore(board,$("ewrap"));board.appendChild($("ewrap"));
+function placeActive(){const c=cur();if(c.ob)return;c.ob=true;const on=templates.filter(t=>t.ob&&t!==c);
+  c.bx=on.length?Math.max(...on.map(t=>t.bx||0))+1024+GAP:0;c.by=on.length?Math.min(...on.map(t=>t.by||0)):0;persist()}
+function layoutBoard(){
+  if(!tdom)return;
+  const ew=$("ewrap"),s0=students[0]||SAMPLE[0],list=templates.filter(t=>t.ob||t.id===activeId),P=16;
+  board.querySelectorAll(".bh,.bs").forEach(n=>n.remove());
+  ew.style.position="absolute";ew.style.margin="0";let mx=0,my=0;
+  list.forEach(t=>{
+    const x=P+(t.bx||0)*scale,y=P+HDR+(t.by||0)*scale,w=1024*scale,h=640*scale,on=t.id===activeId;
+    mx=Math.max(mx,x+w);my=Math.max(my,y+h);
+    board.insertAdjacentHTML("beforeend",`<div class="bh${on?" on":""}" data-id="${t.id}" style="left:${x}px;top:${y-HDR}px;width:${w}px"><span class="bn">${esc(t.name)}</span><button class="bx" title="Tirar do canvas" aria-label="Tirar do canvas">×</button></div>`);
+    if(on){ew.style.left=x+"px";ew.style.top=y+"px"}
+    else board.insertAdjacentHTML("beforeend",`<div class="bs" data-id="${t.id}" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="stage" style="transform:scale(${scale});transform-origin:0 0">${fill(t.html,s0)}</div></div>`)});
+  board.style.width=mx+P+"px";board.style.height=my+P+"px";fitNames(board)}
+function activate(id){if(id===activeId)return;persist();activeId=id;tpl=cur().html;persist();render();openEd()}
+function removeFromBoard(id){const t=templates.find(x=>x.id===id),rest=templates.filter(x=>x.ob&&x.id!==id);
+  if(!t)return;if(!rest.length){note("Tem de ficar pelo menos um modelo no canvas.",1);return}
+  t.ob=false;if(id===activeId)activate(rest[0].id);else{persist();layoutBoard()}}
+board.addEventListener("pointerdown",e=>{
+  if(e.target.closest(".bx"))return;
+  const s=e.target.closest(".bs");if(s){activate(s.dataset.id);return}
+  const h=e.target.closest(".bh");if(!h)return;
+  const id=h.dataset.id,t=templates.find(x=>x.id===id);if(!t)return;e.preventDefault();
+  const body=id===activeId?$("ewrap"):board.querySelector(`.bs[data-id="${id}"]`);if(!body)return;
+  const st={x:e.clientX,y:e.clientY,bx:t.bx||0,by:t.by||0,l:parseFloat(h.style.left),t:parseFloat(h.style.top),bl:parseFloat(body.style.left),bt:parseFloat(body.style.top)};
+  let moved=false;h.setPointerCapture(e.pointerId);
+  const mv=ev=>{const dx=ev.clientX-st.x,dy=ev.clientY-st.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;if(!moved)return;
+    const nx=Math.round((st.bx+dx/scale)/8)*8,ny=Math.round((st.by+dy/scale)/8)*8,ax=(nx-st.bx)*scale,ay=(ny-st.by)*scale;
+    t.bx=nx;t.by=ny;h.style.left=st.l+ax+"px";h.style.top=st.t+ay+"px";body.style.left=st.bl+ax+"px";body.style.top=st.bt+ay+"px"};
+  const up=()=>{h.removeEventListener("pointermove",mv);h.removeEventListener("pointerup",up);
+    if(moved){persist();layoutBoard()}else if(id!==activeId)activate(id)};
+  h.addEventListener("pointermove",mv);h.addEventListener("pointerup",up)});
+board.addEventListener("click",e=>{const b=e.target.closest(".bx");if(b)removeFromBoard(b.closest(".bh").dataset.id)});
+
+/* exportar todos os modelos do canvas num PDF de propostas */
+async function exportBoard(){
+  persist();const s=students[0]||SAMPLE[0],sc=$("sName").value;
+  const list=templates.filter(t=>t.ob||t.id===activeId).sort((a,b)=>((a.by||0)-(b.by||0))||((a.bx||0)-(b.bx||0))),N=list.length;
+  if(!N)return;note("A criar o PDF de propostas…");
+  try{const {jsPDF}=window.jspdf,pdf=new jsPDF({orientation:"landscape",unit:"mm",format:"a4"});
+    for(let i=0;i<N;i++){const t=list[i],c=await renderCard(t.id===activeId?tpl:t.html,s,2);
+      if(i)pdf.addPage("a4","landscape");
+      pdf.setFont("helvetica","bold");pdf.setFontSize(18);pdf.setTextColor(30,30,30);pdf.text("Proposta "+(i+1)+" de "+N,148.5,20,{align:"center"});
+      pdf.setFont("helvetica","normal");pdf.setFontSize(12);pdf.setTextColor(90,90,90);pdf.text(t.name+(sc?"  -  "+sc:""),148.5,28,{align:"center"});
+      const w=220,h=w*640/1024,x=(297-w)/2;pdf.setDrawColor(210,210,210);pdf.rect(x-.4,40-.4,w+.8,h+.8);pdf.addImage(c.toDataURL("image/jpeg",.95),"JPEG",x,40,w,h);
+      pdf.setFontSize(9);pdf.setTextColor(140,140,140);pdf.text("Eduall Software - Cartões de estudante - "+(i+1)+"/"+N,148.5,200,{align:"center"})}
+    dl(pdf.output("blob"),"propostas-cartoes.pdf");note("PDF com "+N+" proposta(s) criado.")}
+  catch(err){note("Não foi possível criar o PDF.",1)}}
+
+/* ===== SOLICITAR IMPRESSÃO (formulário + orçamento) ===== */
+const PRICE={one:4000,two:5000,band:7000,term1:40000,termN:25000},ORDER_WA="";
+const IMG_BAND="https://cdn.mauser.pt/large/product_image/2021/336/d3aafeee51bf68935c3528c862f76060_096-9993.png",IMG_TERM="https://m.media-amazon.com/images/I/61n0GmMfjAL.jpg";
+const kz=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,".")+" Kz";
+document.body.insertAdjacentHTML("beforeend",`<div id="ordM" hidden><div class="om" role="dialog" aria-label="Solicitar impressão de cartões">
+ <div class="oh"><span>Solicitar impressão de cartões</span><button class="alt" id="ordX">Fechar</button></div>
+ <div class="ob"><div class="ordgrid"><div>
+  <label for="oName">Nome do responsável *</label><input type="text" id="oName">
+  <label for="oTel">Telefone / WhatsApp *</label><input type="text" id="oTel">
+  <label for="oSchool">Escola *</label><input type="text" id="oSchool">
+  <label for="oTpl">Modelo do cartão</label><select id="oTpl"></select>
+  <label for="oQty">Quantidade de cartões (alunos)</label><input type="number" id="oQty" min="1" value="100">
+  <label for="oSides">Impressão</label><select id="oSides"><option value="one">Só frente — 4.000 Kz por cartão</option><option value="two">Frente e verso — 5.000 Kz por cartão</option></select>
+  <div class="pcs">
+   <div class="pc" id="pcBand"><img src="${IMG_BAND}" alt="Pulseira RFID" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">
+    <div class="pcb"><b>Pulseira RFID</b><span>7.000 Kz por aluno</span>
+     <label class="ck2"><input type="checkbox" id="oBand"> Adicionar ao pedido</label>
+     <div id="oBandQ" hidden><label for="oBandN">Quantidade de pulseiras</label><input type="number" id="oBandN" min="1" value="100"></div></div></div>
+   <div class="pc" id="pcTerm"><img src="${IMG_TERM}" alt="Terminal RFID USB" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">
+    <div class="pcb"><b>Terminal RFID USB</b><span>Para cartões RFID/biométricos. 1.º terminal 40.000 Kz; terminais adicionais 25.000 Kz cada. Software Eduall gratuito.</span>
+     <label class="ck2"><input type="checkbox" id="oTerm"> Adicionar ao pedido</label>
+     <div id="oTermQ" hidden><label for="oTermN">Nº de terminais</label><input type="number" id="oTermN" min="1" value="1"></div></div></div>
+  </div>
+  <label for="oObs">Observações</label><textarea id="oObs" placeholder="Prazo, cores, detalhes…"></textarea>
+ </div><div class="ords"><h3>Resumo do orçamento</h3><div id="oSum"></div></div></div>
+ <div class="msg" id="oMsg"></div></div>
+ <div class="of"><button class="alt" id="oCopy">Copiar resumo</button><button class="alt" id="oPdf">Baixar orçamento (PDF)</button><button class="pri" id="oSend">Enviar por WhatsApp</button></div>
+</div></div>`);
+const ordBtn=document.createElement("button");ordBtn.className="pri";ordBtn.id="ordBtn";
+ordBtn.innerHTML='<i class="bi bi-printer"></i><span class="ol"> Solicitar impressão</span>';document.querySelector(".hd").appendChild(ordBtn);
+function quote(){
+  const q=Math.max(0,parseInt($("oQty").value)||0),two=$("oSides").value==="two",unit=two?PRICE.two:PRICE.one,band=$("oBand").checked,bq=band?Math.max(0,parseInt($("oBandN").value)||0):0,term=$("oTerm").checked,tq=term?Math.max(1,parseInt($("oTermN").value)||1):0;
+  const L=[["Cartões de estudante ("+(two?"frente e verso":"só frente")+")",q+" × "+kz(unit),q*unit]];
+  if(band)L.push(["Pulseiras RFID",bq+" × "+kz(PRICE.band),bq*PRICE.band]);
+  if(term)L.push(["Terminal RFID USB"+(tq>1?" ("+tq+" unidades)":""),tq>1?"1 × "+kz(PRICE.term1)+" + "+(tq-1)+" × "+kz(PRICE.termN):"1 × "+kz(PRICE.term1),PRICE.term1+(tq-1)*PRICE.termN]);
+  L.push(["Software Eduall","incluído","Grátis"]);
+  return{L,total:L.reduce((a,l)=>a+(typeof l[2]==="number"?l[2]:0),0)}}
+const amt=v=>typeof v==="number"?kz(v):v;
+function oUpd(){const o=quote();$("oBandQ").hidden=!$("oBand").checked;$("oTermQ").hidden=!$("oTerm").checked;
+  $("pcBand").classList.toggle("on",$("oBand").checked);$("pcTerm").classList.toggle("on",$("oTerm").checked);
+  $("oSum").innerHTML=o.L.map(l=>`<div class="sr"><span>${esc(l[0])}<small>${esc(l[1])}</small></span><b>${esc(amt(l[2]))}</b></div>`).join("")+`<div class="st"><span>Total</span><b>${esc(kz(o.total))}</b></div>`}
+function oTplName(){const t=templates.find(x=>x.id===$("oTpl").value);return t?t.name:"-"}
+function oText(){const o=quote(),a=["PEDIDO DE IMPRESSÃO DE CARTÕES - Eduall","Responsável: "+$("oName").value,"Telefone: "+$("oTel").value,"Escola: "+$("oSchool").value,"Modelo: "+oTplName(),""];
+  o.L.forEach(l=>a.push("- "+l[0]+": "+l[1]+" = "+amt(l[2])));a.push("","TOTAL: "+kz(o.total));if($("oObs").value.trim())a.push("Obs.: "+$("oObs").value.trim());return a.join("\n")}
+function oOk(){const m=$("oMsg");m.className="msg";
+  if(!$("oName").value.trim()||!$("oTel").value.trim()||!$("oSchool").value.trim()){m.className="msg err";m.textContent="Preencha nome, telefone e escola.";return false}
+  if(!(parseInt($("oQty").value)>0)){m.className="msg err";m.textContent="Indique a quantidade de cartões.";return false}
+  m.textContent="";return true}
+function openOrder(){
+  $("oSchool").value=$("oSchool").value||$("sName").value;
+  $("oTpl").innerHTML=templates.map(t=>`<option value="${t.id}"${t.id===activeId?" selected":""}>${esc(t.name)}</option>`).join("");
+  if(!$("oQty").dataset.set){$("oQty").value=students.length||100;if(!$("oBandN").dataset.set)$("oBandN").value=$("oQty").value}
+  oUpd();$("ordM").hidden=false}
+ordBtn.onclick=openOrder;$("ordX").onclick=()=>{$("ordM").hidden=true};
+$("ordM").addEventListener("pointerdown",e=>{if(e.target===$("ordM"))$("ordM").hidden=true});
+["oQty","oSides","oBand","oBandN","oTerm","oTermN","oTpl"].forEach(id=>{$(id).addEventListener("input",oUpd);$(id).addEventListener("change",oUpd)});
+$("oQty").addEventListener("input",()=>{$("oQty").dataset.set=1;if(!$("oBandN").dataset.set){$("oBandN").value=$("oQty").value;oUpd()}});
+$("oBandN").addEventListener("input",()=>{$("oBandN").dataset.set=1});
+$("oCopy").onclick=async()=>{if(!oOk())return;const ok=await copyText(oText());$("oMsg").textContent=ok?"Resumo copiado.":"Não foi possível copiar."};
+$("oSend").onclick=()=>{if(!oOk())return;window.open("https://wa.me/"+ORDER_WA+"?text="+encodeURIComponent(oText()),"_blank")};
+$("oPdf").onclick=async()=>{if(!oOk())return;const b=$("oPdf");b.disabled=true;
+  try{const o=quote(),{jsPDF}=window.jspdf,pdf=new jsPDF({unit:"mm",format:"a4"}),t=templates.find(x=>x.id===$("oTpl").value);
+    pdf.setFont("helvetica","bold");pdf.setFontSize(18);pdf.setTextColor(13,153,255);pdf.text("Orçamento - Impressão de cartões",15,20);
+    pdf.setFont("helvetica","normal");pdf.setFontSize(10);pdf.setTextColor(90,90,90);pdf.text("Data: "+new Date().toLocaleDateString("pt-PT"),195,20,{align:"right"});
+    let y=32;[["Responsável",$("oName").value],["Telefone",$("oTel").value],["Escola",$("oSchool").value],["Modelo",oTplName()]].forEach(([k,v])=>{pdf.setFont("helvetica","bold");pdf.text(k+":",15,y);pdf.setFont("helvetica","normal");pdf.text(String(v||"-"),45,y);y+=6});
+    try{const c=await renderCard(t.id===activeId?tpl:t.html,students[0]||SAMPLE[0],1.5);pdf.addImage(c.toDataURL("image/jpeg",.9),"JPEG",15,y+2,80,50)}catch(e){}
+    y+=62;pdf.setFont("helvetica","bold");pdf.setTextColor(30,30,30);pdf.text("Descrição",15,y);pdf.text("Detalhe",105,y);pdf.text("Valor",195,y,{align:"right"});pdf.line(15,y+2,195,y+2);y+=9;pdf.setFont("helvetica","normal");
+    o.L.forEach(l=>{pdf.text(l[0],15,y);pdf.text(l[1],105,y);pdf.text(amt(l[2]),195,y,{align:"right"});y+=8});
+    pdf.line(15,y-3,195,y-3);y+=4;pdf.setFont("helvetica","bold");pdf.setFontSize(14);pdf.text("TOTAL",15,y);pdf.setTextColor(13,153,255);pdf.text(kz(o.total),195,y,{align:"right"});
+    if($("oObs").value.trim()){y+=12;pdf.setFontSize(10);pdf.setTextColor(60,60,60);pdf.setFont("helvetica","normal");pdf.text(pdf.splitTextToSize("Observações: "+$("oObs").value.trim(),180),15,y)}
+    pdf.setFontSize(8);pdf.setTextColor(140,140,140);pdf.text("Valores em Kwanzas (Kz). Software Eduall gratuito. Orçamento sujeito a confirmação.",15,285);
+    dl(pdf.output("blob"),"orcamento-cartoes.pdf");$("oMsg").textContent="Orçamento descarregado."}
+  catch(e){$("oMsg").className="msg err";$("oMsg").textContent="Não foi possível criar o PDF."}b.disabled=false};
 
 /* ===== arranque ===== */
 if(saved&&Array.isArray(saved.students)&&saved.students.length){rawStudents=saved.students;autoMap();students=rawStudents.map(norm)}

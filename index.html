@@ -243,6 +243,18 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
 #ordM .pcb .ck2{margin:6px 0 0}
 #ordM .pcb input[type=number]{max-width:110px}
 </style>
+<style id="tools-side">
+#epOpen{display:none;margin:0 0 8px}
+#tools{margin:0 -12px}
+#ep #tools .eb{padding:8px 12px;border-bottom:1px solid var(--line);gap:6px}
+#ep #tools .eb select,#ep #tools .eb input[type=text]{max-width:100%}
+#ep #tools #eName{width:100%!important}
+#ep #tools .sep{display:none}
+#ep #tools #eStat{margin:0;width:100%}
+#ep #tools #eProps{display:none}
+#ep #tools .eb select{flex:1 1 120px}
+@media(max-width:900px){#epOpen{display:inline-flex}#ep #tools #eProps{display:none}}
+</style>
 </head>
 <body>
 <header class="hd">
@@ -319,6 +331,12 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
   <div class="row" style="margin-top:0"><button class="pri" id="tAll">Aplicar a todos</button><button class="alt" id="tSel">Aos selecionados</button><button class="alt" id="tClr">Todos usam o padrão</button></div>
   <div class="msg" id="tmsg"></div></div>
  <div class="box"><h2>Editor do design</h2>
+  <div class="em">
+   <button class="alt" id="epOpen"><i class="bi bi-sliders"></i> Ferramentas</button>
+   <div id="ec"><div id="ewrap"><div id="est" class="stage"></div><div id="selbox"><i id="hdl"></i></div></div></div>
+   <div id="ep">
+    <div class="oh"><span>Propriedades</span><button class="alt" id="epX">Fechar</button></div>
+    <div id="tools">
   <div class="eb nb">
    <input type="text" id="eName" aria-label="Nome do modelo" placeholder="Nome do modelo" style="width:150px">
    <span class="sep"></span>
@@ -361,10 +379,7 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
    <button class="alt ic" data-al="cv" title="Centrar na vertical" aria-label="Centrar na vertical"><i class="bi bi-align-middle"></i></button>
    <button class="alt ic" data-al="b" title="Alinhar à base" aria-label="Alinhar à base"><i class="bi bi-align-bottom"></i></button>
   </div>
-  <div class="em">
-   <div id="ec"><div id="ewrap"><div id="est" class="stage"></div><div id="selbox"><i id="hdl"></i></div></div></div>
-   <div id="ep">
-    <div class="oh"><span>Propriedades</span><button class="alt" id="epX">Fechar</button></div>
+    </div>
     <h3 style="margin-top:0">Elemento selecionado</h3><div id="props"></div>
     <div class="row"><button class="alt" id="eMir">Espelhar</button><button class="alt" id="eDup">Duplicar</button><button class="alt" id="eDel">Apagar</button><button class="alt" id="eFront">À frente</button><button class="alt" id="eBack">Atrás</button></div>
     <div class="msg" id="eMsg"></div>
@@ -935,7 +950,7 @@ $("eDel").onclick=()=>{const m=tdom.children[sel];if(!m)return;m.remove();sel=-1
 $("eDup").onclick=()=>{const m=tdom.children[sel];if(!m)return;const c=m.cloneNode(true),cs=getComputedStyle(est.children[sel]);c.style.left=(parseFloat(cs.left)+20)+"px";c.style.top=(parseFloat(cs.top)+20)+"px";m.after(c);sel++;commit()};
 $("eFront").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.appendChild(m);sel=tdom.children.length-1;commit()};
 $("eBack").onclick=()=>{const m=tdom.children[sel];if(!m)return;tdom.prepend(m);sel=0;commit()};
-$("eProps").onclick=()=>{$("ep").classList.add("open");bd.hidden=false};
+$("eProps").onclick=$("epOpen").onclick=()=>{$("ep").classList.add("open");bd.hidden=false};
 function openEd(){placeActive();
   tdom=INERT.createElement("div");tdom.innerHTML=clean(tpl);hist=[];redoSt=[];lastKey="";sel=-1;propsFor=-1;
   const keys=[...new Set([...FIELDS,...Object.keys(students[0]||{}).filter(k=>!k.startsWith("__"))])];

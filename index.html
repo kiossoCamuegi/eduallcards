@@ -474,6 +474,29 @@ async function bake(img,force){
     img.src=c.toDataURL("image/png");img.style.objectFit="fill";img.style.objectPosition="0% 0%";
   }catch(e){}
 }
+/* converte <svg> inline em imagem PNG para o html2canvas (sol, ondas, curvas, formas) */
+async function bakeSvg(root){
+  for(const sv of [...root.querySelectorAll("svg")]){
+    if(sv.parentElement&&sv.parentElement.closest("svg"))continue;
+    try{
+      const r=sv.getBoundingClientRect(),
+            w=Math.max(1,Math.round(r.width)),h=Math.max(1,Math.round(r.height));
+      const c=sv.cloneNode(true);
+      c.setAttribute("xmlns","http://www.w3.org/2000/svg");
+      c.setAttribute("width",w);c.setAttribute("height",h);
+      c.removeAttribute("style");
+      const url="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(new XMLSerializer().serializeToString(c));
+      const i=await loadImg(url);if(!i)continue;
+      const S=3,cv=document.createElement("canvas");
+      cv.width=w*S;cv.height=h*S;
+      cv.getContext("2d").drawImage(i,0,0,cv.width,cv.height);
+      const im=document.createElement("img");
+      await new Promise(ok=>{im.onload=im.onerror=ok;im.src=cv.toDataURL("image/png")});
+      im.setAttribute("style",sv.getAttribute("style")||"");
+      sv.replaceWith(im);
+    }catch(e){}
+  }
+}
 const ready=img=>img.complete&&img.naturalWidth?Promise.resolve():new Promise(r=>{img.onload=img.onerror=r;setTimeout(r,8000)});
 function cut(src,tol){return new Promise((ok,no)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>{try{
   const c=document.createElement("canvas");c.width=i.naturalWidth;c.height=i.naturalHeight;const x=c.getContext("2d");x.drawImage(i,0,0);
@@ -1062,8 +1085,9 @@ async function renderCard(html,s,k){
   holder.innerHTML=`<div class="stage">${fill(html,s)}</div>`;
   const el=holder.firstElementChild,imgs=[...el.querySelectorAll("img")],pSrc=photo?(imgCache[photo]||photo):BLANK;
   await document.fonts.ready;
+  await bakeSvg(el);
   for(const im of imgs)await bake(im,$("coverPh").checked&&im.getAttribute("src")===pSrc);
-  await Promise.all(imgs.map(ready));fitNames(el);
+  await Promise.all([...el.querySelectorAll("img")].map(ready));fitNames(el);
   try{return await html2canvas(el,{scale:k,useCORS:true,backgroundColor:"#ffffff",logging:false,scrollX:0,scrollY:0,imageTimeout:20000})}
   finally{holder.innerHTML=""}}
 async function exportCurrent(kind){
@@ -1108,8 +1132,9 @@ async function makePDF(list,name){
       let c=null;
       for(let t=0;t<2&&!c;t++){try{holder.innerHTML=stageHTML(s);const el=holder.firstElementChild,imgs=[...el.querySelectorAll("img")];
         await document.fonts.ready;
+        await bakeSvg(el);
         for(const im of imgs)await bake(im,cover&&im.getAttribute("src")===pSrc);
-        await Promise.all(imgs.map(ready));fitNames(el);
+        await Promise.all([...el.querySelectorAll("img")].map(ready));fitNames(el);
         c=await html2canvas(el,{scale:1.5,useCORS:true,backgroundColor:"#ffffff",logging:false,scrollX:0,scrollY:0,imageTimeout:20000})}catch(e){await sleep(300)}}
       if(c){if(!first)pdf.addPage([85.6,54],"landscape");first=false;pdf.addImage(c.toDataURL("image/jpeg",.9),"JPEG",0,0,85.6,54)}else skipped++;
       c=null;n++;bar.firstElementChild.style.width=(n/N*100)+"%";pm.textContent=`A criar ${n} de ${N}…`;prog(n,N,`${n} de ${N} cartões (${Math.round(n/N*100)}%)`);

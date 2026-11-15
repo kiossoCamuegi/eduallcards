@@ -262,6 +262,16 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
 @media(max-width:900px){#undoBar{left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 24px)}}
 @media(max-width:420px){#undoBar button{padding:0 10px}}
 </style>
+<style>.tt.on .tn::after{content:" · padrão";color:var(--p);font-weight:600}</style>
+<style id="checks">
+input[type=checkbox]{-webkit-appearance:none;appearance:none;width:16px!important;height:16px!important;min-width:16px;margin:0;flex:none;display:inline-grid;place-content:center;background:#fff;border:1.5px solid #B3B3B3;border-radius:4px;cursor:pointer;transition:background .12s,border-color .12s}
+input[type=checkbox]::after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-2px;opacity:0}
+input[type=checkbox]:checked{background:var(--p);border-color:var(--p)}
+input[type=checkbox]:checked::after{opacity:1}
+input[type=checkbox]:focus-visible{outline:2px solid rgba(13,153,255,.55);outline-offset:2px}
+#ordM .ck2 input,.ckl input{margin-top:0}
+#ordM .ck2 input{margin-top:1px}
+</style>
 </head>
 <body>
 <header class="hd">
@@ -334,7 +344,7 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
     <div class="row"><button class="pri" id="pasteAdd">Adicionar modelo</button></div></details></div>
   <div class="gal" id="gal"></div>
   <div class="row"><button class="alt" id="tNew">Novo em branco</button><button class="alt" id="tDup">Duplicar</button><button class="alt" id="tDel">Apagar</button><button class="alt" id="tExp1">Exportar este</button><button class="alt" id="tExp">Exportar todos</button><label class="btn alt" style="margin:0">Importar modelos<input type="file" id="tImp" accept=".json,application/json"></label></div>
-  <div class="msg">O modelo selecionado é o padrão. Ao editar um modelo original, é criada uma cópia e o original mantém-se intacto. Pode aplicá-lo a cartões específicos:</div>
+  <div class="msg">Ao escolher um modelo original, é criada logo uma cópia editável (o original nunca é alterado). A cópia fica guardada, pode mudar-lhe o nome e o modelo selecionado é o padrão: abre sempre assim quando entrar na app. Pode aplicá-lo a cartões específicos:</div>
   <div class="row" style="margin-top:0"><button class="pri" id="tAll">Aplicar a todos</button><button class="alt" id="tSel">Aos selecionados</button><button class="alt" id="tClr">Todos usam o padrão</button></div>
   <div class="msg" id="tmsg"></div></div>
  <div class="box"><h2>Editor do design</h2>
@@ -786,7 +796,17 @@ function show(n){tab=n;document.querySelectorAll(".tab").forEach(t=>t.hidden=t.i
 document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>show(b.dataset.t));
 
 /* ===== galeria de modelos ===== */
-$("gal").addEventListener("click",e=>{const d=e.target.closest(".tt");if(!d)return;persist();activeId=d.dataset.id;tpl=cur().html;persist();render();openEd()});
+function selectTpl(id){
+  persist();const t=templates.find(x=>x.id===id);if(!t)return;
+  let msg="";
+  if(isOrig(t)){
+    let c=templates.find(x=>x.from===t.id&&!isOrig(x));
+    if(c)msg=`A usar a sua cópia "${c.name}". O original mantém-se intacto.`;
+    else{c={id:uid(),name:t.name+" (cópia)",html:t.html,from:t.id};templates.push(c);msg=`Cópia criada: "${c.name}". Já pode editar e mudar o nome; o original mantém-se intacto.`}
+    id=c.id}
+  activeId=id;tpl=cur().html;persist();render();openEd();
+  if(msg){$("tmsg").className="msg";$("tmsg").textContent=msg}}
+$("gal").addEventListener("click",e=>{const d=e.target.closest(".tt");if(!d)return;selectTpl(d.dataset.id)});
 const uid=()=>"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 function addTemplate(name,html,from){persist();const t={id:uid(),name,html};if(from)t.from=from;templates.push(t);activeId=t.id;tpl=html;persist();render();openEd()}
 $("tNew").onclick=()=>addTemplate("Novo modelo",BLANK_TPL);
@@ -1156,7 +1176,7 @@ function layoutBoard(){
     if(on){ew.style.left=x+"px";ew.style.top=y+"px"}
     else board.insertAdjacentHTML("beforeend",`<div class="bs" data-id="${t.id}" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="stage" style="transform:scale(${scale});transform-origin:0 0">${fill(t.html,s0)}</div></div>`)});
   board.style.width=mx+P+"px";board.style.height=my+P+"px";fitNames(board)}
-function activate(id){if(id===activeId)return;persist();activeId=id;tpl=cur().html;persist();render();openEd()}
+function activate(id){if(id===activeId)return;const o=templates.find(x=>x.id===id);if(o&&isOrig(o))return selectTpl(id);persist();activeId=id;tpl=cur().html;persist();render();openEd()}
 function removeFromBoard(id){const t=templates.find(x=>x.id===id),rest=templates.filter(x=>x.ob&&x.id!==id);
   if(!t)return;if(!rest.length){note("Tem de ficar pelo menos um modelo no canvas.",1);return}
   t.ob=false;if(id===activeId)activate(rest[0].id);else{persist();layoutBoard()}}
@@ -1192,7 +1212,7 @@ async function exportBoard(){
   catch(err){note("Não foi possível criar o PDF.",1)}}
 
 /* ===== SOLICITAR IMPRESSÃO (formulário + orçamento) ===== */
-const PRICE={one:4000,two:5000,band:7000,term1:40000,termN:25000},ORDER_WA="";
+const PRICE={one:4000,two:5000,band:2000,term1:40000,termN:25000},ORDER_WA="";
 const IMG_BAND="https://cdn.mauser.pt/large/product_image/2021/336/d3aafeee51bf68935c3528c862f76060_096-9993.png",IMG_TERM="https://m.media-amazon.com/images/I/61n0GmMfjAL.jpg";
 const kz=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,".")+" Kz";
 document.body.insertAdjacentHTML("beforeend",`<div id="ordM" hidden><div class="om" role="dialog" aria-label="Solicitar impressão de cartões">
@@ -1206,7 +1226,7 @@ document.body.insertAdjacentHTML("beforeend",`<div id="ordM" hidden><div class="
   <label for="oSides">Impressão</label><select id="oSides"><option value="one">Só frente — 4.000 Kz por cartão</option><option value="two">Frente e verso — 5.000 Kz por cartão</option></select>
   <div class="pcs">
    <div class="pc" id="pcBand"><img src="${IMG_BAND}" alt="Pulseira RFID" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">
-    <div class="pcb"><b>Pulseira RFID</b><span>7.000 Kz por aluno</span>
+    <div class="pcb"><b>Pulseira RFID</b><span>2.000 Kz por aluno</span>
      <label class="ck2"><input type="checkbox" id="oBand"> Adicionar ao pedido</label>
      <div id="oBandQ" hidden><label for="oBandN">Quantidade de pulseiras</label><input type="number" id="oBandN" min="1" value="100"></div></div></div>
    <div class="pc" id="pcTerm"><img src="${IMG_TERM}" alt="Terminal RFID USB" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">

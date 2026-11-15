@@ -255,6 +255,13 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
 #ep #tools .eb select{flex:1 1 120px}
 @media(max-width:900px){#epOpen{display:inline-flex}#ep #tools #eProps{display:none}}
 </style>
+<style id="undo-float">
+#undoBar{position:fixed;z-index:60;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:calc(280px + (100vw - 544px)/2);transform:translateX(-50%);display:flex;gap:6px;padding:6px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.18)}
+#undoBar button{height:32px;padding:0 12px;border-radius:10px;font-size:12px;white-space:nowrap}
+#undoBar button i{font-size:15px}
+@media(max-width:900px){#undoBar{left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 24px)}}
+@media(max-width:420px){#undoBar button{padding:0 10px}}
+</style>
 </head>
 <body>
 <header class="hd">
@@ -332,6 +339,7 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
   <div class="msg" id="tmsg"></div></div>
  <div class="box"><h2>Editor do design</h2>
   <div class="em">
+   <div id="undoBar" role="toolbar" aria-label="Desfazer e refazer"><button class="alt" id="eUndo" title="Desfazer (Ctrl+Z)">Desfazer</button><button class="alt" id="eRedo" title="Refazer (Ctrl+Shift+Z ou Ctrl+Y)">Refazer</button></div>
    <button class="alt" id="epOpen"><i class="bi bi-sliders"></i> Ferramentas</button>
    <div id="ec"><div id="ewrap"><div id="est" class="stage"></div><div id="selbox"><i id="hdl"></i></div></div></div>
    <div id="ep">
@@ -340,7 +348,7 @@ aside{background:#fff;border-right:1px solid var(--line);padding:0}
   <div class="eb nb">
    <input type="text" id="eName" aria-label="Nome do modelo" placeholder="Nome do modelo" style="width:150px">
    <span class="sep"></span>
-   <button class="alt" id="eUndo" title="Desfazer (Ctrl+Z)">Desfazer</button><button class="alt" id="eRedo" title="Refazer (Ctrl+Shift+Z ou Ctrl+Y)">Refazer</button>
+   
    <span class="sep"></span>
    <span class="zm"><button class="alt" id="eZoomOut" title="Diminuir zoom" aria-label="Diminuir zoom"></button><button class="alt" id="eZoomLbl" title="Ajustar ao ecrã">100%</button><button class="alt" id="eZoomIn" title="Aumentar zoom" aria-label="Aumentar zoom"></button></span>
    <span class="sep"></span>
